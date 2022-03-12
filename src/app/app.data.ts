@@ -1,106 +1,116 @@
-import {MultiSeries, SingleSeries} from "@swimlane/ngx-charts/lib/models/chart-data.model";
+import {MultiSeries } from "@swimlane/ngx-charts/lib/models/chart-data.model";
 
 
-export const lineChartData: MultiSeries = [
+export const gradeChartData: MultiSeries = [
   {
-    name: 'Silver Grade',
+    name: "Indicated resource",
     series: [
       {
-        name: 'Indicated resource',
-        value: 50
+        name: "Silver Grade",
+        value: 5,
       },
       {
-        value: 80,
-        name: 'Inferred resource'
+        name: "Lead Grade",
+        value: 7
       },
       {
-        value: 85,
-        name: 'Measured resource'
-      },
-      {
-        value: 90,
-        name: 'Probable (ore) reserve'
-      },
-      {
-        value: 100,
-        name: 'Proved (ore) reserve'
+        name: "Zinc Grade",
+        value: 9
       }
     ]
   },
   {
-    name: 'Lead Grade',
+    name: "Inferred resource",
     series: [
       {
-        value: 10,
-        name: 'Indicated resource'
+        name: "Silver Grade",
+        value: 2
       },
       {
-        value: 20,
-        name: 'Inferred resource'
+        name: "Lead Grade",
+        value: 9
       },
       {
-        value: 30,
-        name: 'Measured resource'
-      },
-      {
-        value: 40,
-        name: 'Probable (ore) reserve'
-      },
-      {
-        value: 10,
-        name: 'Proved (ore) reserve'
+        name: "Zinc Grade",
+        value: 3
       }
     ]
   },
   {
-    name: 'Zinc Grade',
+    name: "Measured resource",
     series: [
       {
-        value: 2,
-        name: 'Indicated resource'
+        name: "Silver Grade",
+        value: 5
       },
       {
-        value: 4,
-        name: 'Inferred resource'
+        name: "Lead Grade",
+        value: 2.5
       },
       {
-        value: 20,
-        name: 'Measured resource'
+        name: "Zinc Grade",
+        value: 4
+      }
+    ]
+  },
+  {
+    name: "Probable (ore) reserve",
+    series: [
+      {
+        name: "Silver Grade",
+        value: 1
       },
       {
-        value: 30,
-        name: 'Probable (ore) reserve'
+        name: "Lead Grade",
+        value: 2
       },
       {
-        value: 35,
-        name: 'Proved (ore) reserve'
+        name: "Zinc Grade",
+        value: 3
+      }
+    ]
+  },
+  {
+    name: "Proved (ore) reserve",
+    series: [
+      {
+        name: "Silver Grade",
+        value: 4
+      },
+      {
+        name: "Lead Grade",
+        value: 5
+      },
+      {
+        name: "Zinc Grade",
+        value: 5
       }
     ]
   }
 ];
 
 
-export const barChartData : MultiSeries = [
+export const tonnageChartData : MultiSeries = [
   {
     name: "Indicated resource",
     series: [
       {
         name: "Silver",
-        value: 40632,
+        value: 40,
         "extra": {
           "code": "de"
         }
       },
       {
         name: "Lead",
-        value: 36953,
+        value: 36,
         "extra": {
           "code": "de"
         }
       },
       {
         name: "Zinc",
-        value: 31476,
+        value: 31,
         "extra": {
           "code": "de"
         }
@@ -112,21 +122,21 @@ export const barChartData : MultiSeries = [
     series: [
       {
         name: "Silver",
-        value: 330,
+        value: 0,
         "extra": {
           "code": "us"
         }
       },
       {
         name: "Lead",
-        value: 45986,
+        value: 45,
         "extra": {
           "code": "us"
         }
       },
       {
         name: "Zinc",
-        value: 37060,
+        value: 37,
         "extra": {
           "code": "us"
         }
@@ -138,21 +148,21 @@ export const barChartData : MultiSeries = [
     series: [
       {
         name: "Silver",
-        value: 36745,
+        value: 36,
         "extra": {
           "code": "fr"
         }
       },
       {
         name: "Lead",
-        value: 34774,
+        value: 34,
         "extra": {
           "code": "fr"
         }
       },
       {
         name: "Zinc",
-        value: 29476,
+        value: 29,
         "extra": {
           "code": "fr"
         }
@@ -164,21 +174,21 @@ export const barChartData : MultiSeries = [
     series: [
       {
         name: "Silver",
-        value: 36240,
+        value: 36,
         "extra": {
           "code": "uk"
         }
       },
       {
         name: "Lead",
-        value: 32543,
+        value: 32,
         "extra": {
           "code": "uk"
         }
       },
       {
         name: "Zinc",
-        value: 26424,
+        value: 26,
         "extra": {
           "code": "uk"
         }
@@ -190,21 +200,21 @@ export const barChartData : MultiSeries = [
     series: [
       {
         name: "Silver",
-        value: 36240,
+        value: 36,
         "extra": {
           "code": "uk"
         }
       },
       {
         name: "Lead",
-        value: 32543,
+        value: 32,
         "extra": {
           "code": "uk"
         }
       },
       {
         name: "Zinc",
-        value: 26424,
+        value: 26,
         "extra": {
           "code": "uk"
         }

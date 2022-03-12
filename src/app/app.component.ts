@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {barChartData, lineChartData} from "./app.data";
+import {tonnageChartData, gradeChartData} from "./app.data";
 import { LegendPosition } from './custom-grouped-vertical-bar-chart/custom.grouped.vertical.bar.type';
 import {MultiSeries} from "@swimlane/ngx-charts/lib/models/chart-data.model";
 
@@ -11,7 +11,8 @@ import {MultiSeries} from "@swimlane/ngx-charts/lib/models/chart-data.model";
 export class AppComponent {
   title = 'ngtest';
   //dualChartData: MultiSeries[] = [barChartData, lineChartData];
-  dualChartData: MultiSeries = barChartData;
+  data1: MultiSeries = tonnageChartData;
+  data2: MultiSeries = gradeChartData;
   legendPosition = LegendPosition.Right;
   yScaleMax: number;
   constructor() {

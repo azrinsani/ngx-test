@@ -24,6 +24,7 @@
     &.hidden {
       display: none;
     }
+    cursor: default;
   }
 
   g {
@@ -85,4 +86,30 @@
       }
     }
   }
+
+  // Change the X-Axis Label
+  .chart-x-axis > g > g[ngx-charts-axis-label] > text {
+    font-weight: bold;
+    transform: translate(0px,5px); // Adds a 5px padding between Label and ticks
+  }
+
+  // Change the Y-Axis Label
+  .chart-y-axis > g > g[ngx-charts-axis-label] > text {
+    font-weight: bold;
+  }
+}
+
+// Style the Chart Legend
+ngx-charts-legend {
+  height: 500px; // When legend is on the right, this must match the View Height e.g. [view]="[1000,500]"
+  .chart-legend {
+    margin-top: 20px;
+    .legend-title {
+      display: none;
+    }
+  }
+}
+
+.legend-label-text, .legend-label-color  {
+  cursor: default;
 }
