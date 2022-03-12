@@ -1,34 +1,74 @@
-import { TestBed } from '@angular/core/testing';
-import {CustomGroupedVerticalBarComponent} from "./custom.grouped.vertical.bar.component";
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { TestBed, waitForAsync } from '@angular/core/testing';
+import { CustomGroupedVerticalBarComponent } from './custom.grouped.vertical.bar.component';
+import { Component } from '@angular/core';
+import { customGroupedVerticalBarChartMockData } from './custom.grouped.vertical.bar.component.mock';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+
+@Component({
+  selector: 'ga-test-component',
+  template: '',
+})
+class TestComponent {
+  data: any = customGroupedVerticalBarChartMockData;
+}
 
 describe('CustomGroupedVerticalBarComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
+      declarations: [
+        CustomGroupedVerticalBarComponent,
+        TestComponent
       ],
-      declarations: [CustomGroupedVerticalBarComponent]
+      imports: [
+        NgxChartsModule,
+        BrowserAnimationsModule,
+        NoopAnimationsModule
+      ]
+    }).compileComponents();
+    TestBed.overrideComponent(TestComponent, {
+      set: {
+        template: `
+                   <ga-ngx-charts-grouped-vertical-bar
+                    [view]="[1000,500]"
+                    [data]="data"
+                    [animations]="true"
+                    [xAxisLabel]= "'Resources and Reserves Categories'"
+                    [yAxisLabel]="'Tonnage (MT)'">
+                  </ga-ngx-charts-grouped-vertical-bar>`
+      }
     }).compileComponents();
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(CustomGroupedVerticalBarComponent);
-    const customGroupedVerticalBarComponent = fixture.debugElement.componentInstance;
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+    const customGroupedVerticalBarComponent: CustomGroupedVerticalBarComponent = fixture.debugElement.componentInstance;
     expect(customGroupedVerticalBarComponent).toBeTruthy();
   });
 
-  it(`should have as title 'ngx-charts'`, () => {
-    const fixture = TestBed.createComponent(CustomGroupedVerticalBarComponent);
+  it('should create the axes', () => {
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
     const customGroupedVerticalBarComponent: CustomGroupedVerticalBarComponent = fixture.debugElement.componentInstance;
-    //expect(customGroupedVerticalBarComponent.dims).toEqual('ngx-charts');
-    console.log(fixture.debugElement.nativeElement);
+    var chartXAxisLabel = fixture.nativeElement.querySelector('.chart-x-axis > g > g[ngx-charts-axis-label] > text').innerHTML;
+    var chartYAxisLabel = fixture.nativeElement.querySelector('.chart-y-axis > g > g[ngx-charts-axis-label] > text').innerHTML;
+    expect(chartXAxisLabel.includes('Resources and Reserves Categories')).toBeTrue();
+    expect(chartYAxisLabel.includes('Tonnage (MT)')).toBeTrue();
   });
 
-  // it('should render title', () => {
-  //   const fixture = TestBed.createComponent(CustomGroupedVerticalBarComponent);
-  //   fixture.detectChanges();
-  //   const compiled = fixture.debugElement.nativeElement;
-  //   expect(compiled.querySelector('.content span').textContent).toContain('ngx-charts app is running!');
-  // });
+  it('should draw 5 bar groups with 3 child bars each', () => {
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+    const customGroupedVerticalBarComponent: CustomGroupedVerticalBarComponent = fixture.debugElement.componentInstance;
+    var barGroups = fixture.nativeElement.querySelectorAll('.grouped-chart-vertical-bars');
+    expect(barGroups.length).toBe(5);
+    expect(barGroups[0].childElementCount).toBe(3);
+    expect(barGroups[1].childElementCount).toBe(3);
+    expect(barGroups[2].childElementCount).toBe(3);
+    expect(barGroups[3].childElementCount).toBe(3);
+    expect(barGroups[4].childElementCount).toBe(3);
+  });
+
 });

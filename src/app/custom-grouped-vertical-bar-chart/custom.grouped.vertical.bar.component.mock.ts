@@ -1,88 +1,87 @@
-import {MultiSeries, SingleSeries} from "@swimlane/ngx-charts/lib/models/chart-data.model";
-
+import {MultiSeries } from '@swimlane/ngx-charts/lib/models/chart-data.model';
 
 export const customGroupedVerticalBarChartMockData: MultiSeries = [
   {
-    name: "Indicated resource",
+    name: 'Indicated resource',
     series: [
       {
-        name: "Silver Grade",
+        name: 'Silver Grade',
         value: 5,
       },
       {
-        name: "Lead Grade",
+        name: 'Lead Grade',
         value: 7
       },
       {
-        name: "Zinc Grade",
+        name: 'Zinc Grade',
         value: 9
       }
     ]
   },
   {
-    name: "Inferred resource",
+    name: 'Inferred resource',
     series: [
       {
-        name: "Silver Grade",
+        name: 'Silver Grade',
         value: 2
       },
       {
-        name: "Lead Grade",
+        name: 'Lead Grade',
         value: 9
       },
       {
-        name: "Zinc Grade",
+        name: 'Zinc Grade',
         value: 3
       }
     ]
   },
   {
-    name: "Measured resource",
+    name: 'Measured resource',
     series: [
       {
-        name: "Silver Grade",
+        name: 'Silver Grade',
         value: 5
       },
       {
-        name: "Lead Grade",
+        name: 'Lead Grade',
         value: 2.5
       },
       {
-        name: "Zinc Grade",
+        name: 'Zinc Grade',
         value: 4
       }
     ]
   },
   {
-    name: "Probable (ore) reserve",
+    name: 'Probable (ore) reserve',
     series: [
       {
-        name: "Silver Grade",
+        name: 'Silver Grade',
         value: 1
       },
       {
-        name: "Lead Grade",
+        name: 'Lead Grade',
         value: 2
       },
       {
-        name: "Zinc Grade",
+        name: 'Zinc Grade',
         value: 3
       }
     ]
   },
   {
-    name: "Proved (ore) reserve",
+    name: 'Proved (ore) reserve',
     series: [
       {
-        name: "Silver Grade",
+        name: 'Silver Grade',
         value: 4
       },
       {
-        name: "Lead Grade",
+        name: 'Lead Grade',
         value: 5
       },
       {
-        name: "Zinc Grade",
+        name: 'Zinc Grade',
         value: 5
       }
     ]

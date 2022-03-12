@@ -14,7 +14,6 @@
       [xScale]="groupScale"
       [dims]="dims"
       [showLabel]="showXAxisLabel"
-      [style]="'font-family: \'Arial\''"
       [labelText]="xAxisLabel"
       [trimTicks]="trimXAxisTicks"
       [rotateTicks]="autoRotateXAxisTicks"
@@ -38,7 +37,7 @@
       (dimensionsChanged)="updateYAxisWidth($event)"
     ></svg:g>
     <svg:g>
-      <svg:g
+      <svg:g class="grouped-chart-vertical-bars"
         ngx-charts-series-vertical
         *ngFor="let group of data; let index = index; trackBy: trackBy"
         [@animationState]="'active'"

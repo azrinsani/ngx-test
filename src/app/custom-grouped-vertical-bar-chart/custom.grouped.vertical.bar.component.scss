@@ -5,7 +5,7 @@
   .circle,
   .bar,
   .arc {
-    cursor: pointer;
+    cursor: default;
   }
 
   .bar,
@@ -110,6 +110,7 @@ ngx-charts-legend {
   }
 }
 
-.legend-label-text, .legend-label-color  {
-  cursor: default;
+.legend-labels * {
+  cursor: default !important; // This disables mouse hover cursor on the legend labels
+  color: #000; // This disables mouse hover effect on the legend labels
 }

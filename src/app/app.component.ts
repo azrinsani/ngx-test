@@ -10,16 +10,10 @@ import {MultiSeries} from "@swimlane/ngx-charts/lib/models/chart-data.model";
 })
 export class AppComponent {
   title = 'ngtest';
-  //dualChartData: MultiSeries[] = [barChartData, lineChartData];
   data1: MultiSeries = tonnageChartData;
   data2: MultiSeries = gradeChartData;
   legendPosition = LegendPosition.Right;
   yScaleMax: number;
   constructor() {
   }
-
-  onDataItemClick(item) {
-    console.log(item);
-  }
-
 }

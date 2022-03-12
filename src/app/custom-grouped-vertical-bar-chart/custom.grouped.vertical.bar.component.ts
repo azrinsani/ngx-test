@@ -30,8 +30,8 @@ import { ScaleBand } from 'd3';
 })
 export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   @Input() data: MultiSeries = []; // The Actual Data that will draw the plot
-  @Input() showXAxisLabel: boolean; // This shows a label under the X-axes ticks and tick labels.
-  @Input() showYAxisLabel: boolean;
+  @Input() showXAxisLabel: boolean = true; // This shows a label under the X-axes ticks and tick labels.
+  @Input() showYAxisLabel: boolean = true;
   @Input() xAxisLabel: string;
   @Input() yAxisLabel: string;
   @Input() tooltipDisabled: boolean = false;
@@ -39,9 +39,9 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   @Input() showGridLines: boolean = true;
   @Input() activeEntries: any[] = [];
   @Input() schemeType: ScaleType;
-  @Input() trimXAxisTicks: boolean = true; // This trims the label in the X-Axis, for example in an X-Axis of 'Australia', 'USA','UK', a trimmed X-Acis of maxXAxisTickLength=5 will be 'Austr..'
+  @Input() trimXAxisTicks: boolean = false; // This trims the label in the X-Axis, for example in an X-Axis of 'Australia', 'USA','UK', a trimmed X-Acis of maxXAxisTickLength=5 will be 'Austr..'
   @Input() maxXAxisTickLength: number = 16; // This value has no effect when trimXAxisTicks is set as false
-  @Input() autoRotateXAxisTicks: boolean = false; // Enables the automatic rotation of x-axis ticks to prevent overlaps
+  @Input() autoRotateXAxisTicks: boolean = true; // Enables the automatic rotation of x-axis ticks to prevent overlaps
   @Input() xAxisTickFormatting: (any) => string; // Pass in an arrow function which takes the data and returns a string
   @Input() yAxisTickFormatting: (any) => string; // Pass in an arrow function which takes the data and returns a string
   @Input() xAxisTicks: any[];
