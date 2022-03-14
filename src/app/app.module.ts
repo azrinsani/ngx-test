@@ -19,7 +19,7 @@ import {CustomGroupedVerticalBarModule} from "./custom-grouped-vertical-bar-char
     AppRoutingModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
-    CommonModule
+    CommonModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

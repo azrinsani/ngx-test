@@ -1,4 +1,4 @@
-<ngx-charts-chart
+<ngx-charts-chart [ngClass]="{ 'chart-hide-legend-text': !legendTitle }"
   [view]="[width + legendSpacing, height]"
   [showLegend]="showLegend"
   [legendOptions]="legendOptions"

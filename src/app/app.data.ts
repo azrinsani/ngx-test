@@ -5,17 +5,10 @@ export const gradeChartData: MultiSeries = [
   {
     name: "Indicated resource",
     series: [
-      {
-        name: "Silver Grade",
-        value: 5,
-      },
+
       {
         name: "Lead Grade",
         value: 7
-      },
-      {
-        name: "Zinc Grade",
-        value: 9
       }
     ]
   },

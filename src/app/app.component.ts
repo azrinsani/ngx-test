@@ -13,7 +13,6 @@ export class AppComponent {
   data1: MultiSeries = tonnageChartData;
   data2: MultiSeries = gradeChartData;
   legendPosition = LegendPosition.Right;
-  yScaleMax: number;
   constructor() {
   }
 }
