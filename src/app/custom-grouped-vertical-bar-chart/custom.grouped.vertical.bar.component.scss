@@ -1,6 +1,10 @@
+.chart-hide-legend-text .legend-title-text {
+  display: none !important;
+}
+
 .ngx-charts {
   float: left;
-  overflow: visible;
+  overflow: scroll;
 
   .circle,
   .bar,

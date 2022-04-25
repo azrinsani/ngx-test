@@ -51,9 +51,8 @@ describe('CustomGroupedVerticalBarComponent', () => {
   it('should create the axes', () => {
     const fixture = TestBed.createComponent(TestComponent);
     fixture.detectChanges();
-    const customGroupedVerticalBarComponent: CustomGroupedVerticalBarComponent = fixture.debugElement.componentInstance;
-    var chartXAxisLabel = fixture.nativeElement.querySelector('.chart-x-axis > g > g[ngx-charts-axis-label] > text').innerHTML;
-    var chartYAxisLabel = fixture.nativeElement.querySelector('.chart-y-axis > g > g[ngx-charts-axis-label] > text').innerHTML;
+    const chartXAxisLabel = fixture.nativeElement.querySelector('.chart-x-axis > g > g[ngx-charts-axis-label] > text').innerHTML;
+    const chartYAxisLabel = fixture.nativeElement.querySelector('.chart-y-axis > g > g[ngx-charts-axis-label] > text').innerHTML;
     expect(chartXAxisLabel.includes('Resources and Reserves Categories')).toBeTrue();
     expect(chartYAxisLabel.includes('Tonnage (MT)')).toBeTrue();
   });
@@ -61,8 +60,7 @@ describe('CustomGroupedVerticalBarComponent', () => {
   it('should draw 5 bar groups with 3 child bars each', () => {
     const fixture = TestBed.createComponent(TestComponent);
     fixture.detectChanges();
-    const customGroupedVerticalBarComponent: CustomGroupedVerticalBarComponent = fixture.debugElement.componentInstance;
-    var barGroups = fixture.nativeElement.querySelectorAll('.grouped-chart-vertical-bars');
+    const barGroups = fixture.nativeElement.querySelectorAll('.grouped-chart-vertical-bars');
     expect(barGroups.length).toBe(5);
     expect(barGroups[0].childElementCount).toBe(3);
     expect(barGroups[1].childElementCount).toBe(3);

@@ -82,7 +82,6 @@ export const gradeChartData: MultiSeries = [
   }
 ];
 
-
 export const tonnageChartData : MultiSeries = [
   {
     name: "Indicated resource",
@@ -215,3 +214,45 @@ export const tonnageChartData : MultiSeries = [
     ]
   }
 ]
+
+export const depositGeochemistryQualityData : MultiSeries = [
+  {
+    name: "Indicated resource",
+    series: [
+      {
+        name: "Silver",
+        value: 40,
+        "extra": {
+          "code": "de"
+        }
+      },
+      {
+        name: "Lead",
+        value: 36,
+        "extra": {
+          "code": "de"
+        }
+      },
+      {
+        name: "Zinc",
+        value: 31,
+        "extra": {
+          "code": "de"
+        }
+      },
+      {
+        name: "Iron",
+        value: 2,
+        "extra": {
+          "code": "Fe"
+        }
+      },
+      {
+        name: "Iron Oxide",
+        value: 90,
+        "extra": {
+          "code": "FeOx"
+        }
+      }
+    ]
+  }];

@@ -1,13 +1,11 @@
 import { Component, Input, Output, ViewEncapsulation, EventEmitter, ChangeDetectionStrategy, ContentChild, TemplateRef, TrackByFunction } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
-import {scaleBand, ScaleLinear, scaleLinear} from 'd3-scale';
-import {calculateViewDimensions, ViewDimensions} from "@swimlane/ngx-charts";
-import { ColorHelper } from "@swimlane/ngx-charts";
-import { DataItem } from "@swimlane/ngx-charts";
-import { BaseChartComponent } from "@swimlane/ngx-charts";
-import {BarOrientation, LegendOptions, LegendPosition, ScaleType} from './custom.grouped.vertical.bar.type';
-import {MultiSeries, Series} from "@swimlane/ngx-charts/lib/models/chart-data.model";
-import { CurveFactory, curveLinear } from 'd3-shape';
+import { scaleBand, ScaleLinear, scaleLinear} from 'd3-scale';
+import { calculateViewDimensions, DataItem, ViewDimensions } from '@swimlane/ngx-charts';
+import { ColorHelper } from '@swimlane/ngx-charts';
+import { BaseChartComponent } from '@swimlane/ngx-charts';
+import { BarOrientation, LegendOptions, LegendPosition, ScaleType} from './custom.grouped.vertical.bar.type';
+import { MultiSeries, Series} from '@swimlane/ngx-charts/lib/models/chart-data.model';
 import { ScaleBand } from 'd3';
 
 @Component({
@@ -54,12 +52,12 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   @Input() showDataLabel: boolean = false; // This shows the data at the top of every bar
   @Input() dataLabelFormatting: (any) => string; // Formats how the data at the top of every bar should appear. Pass in an arrow function which takes the data and returns a string.
   @Input() showLegend: boolean = false; // Shows the legend
-  @Input() legendTitle: string = 'Legend';
+  @Input() legendTitle: string;
   @Input() legendPosition: LegendPosition = LegendPosition.Right;
   @Output() dataItemHoverEnter: EventEmitter<any> = new EventEmitter(); // Emits value when mouse hovers over a bar or a legend item
   @Output() dataItemHoverLeave: EventEmitter<any> = new EventEmitter(); // Emits value when mouse un-hovers over a bar or a legend item
   @Output() dataItemClick: EventEmitter<any> = new EventEmitter(); // Emits value when a bar or a legend item is clicked
-  @ContentChild('tooltipTemplate') tooltipTemplate: TemplateRef<any>; // See => https://github.com/swimlane/ngx-charts/blob/8ebb3dbcbbea443fefdcafd1f5c9069df0e0c4ae/src/app/app.component.html#L992
+  @ContentChild('tooltipTemplate') tooltipTemplate: TemplateRef<any>; // Changes the popup that is displayed when mouse is hovered over each individual bar charts. Just add an <ng-template #tooltipTemplate let-model="model"> to create this. See => https://github.com/swimlane/ngx-charts/blob/8ebb3dbcbbea443fefdcafd1f5c9069df0e0c4ae/src/app/app.component.html#L992
 
   dims: ViewDimensions;
   groupDomain: string[]; // A group domain is basically all the group names
@@ -78,9 +76,6 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   barOrientation = BarOrientation;
   scaleType = ScaleType.Linear;
   legendSpacing = 0;
-
-  ngOnInit() {
-  }
 
   update(): void {
     super.update();
@@ -117,7 +112,7 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     this.transform = `translate(${this.dims.xOffset} , ${this.margin[0] + this.dataLabelMaxHeight.negative})`;
   }
 
-  onDataLabelMaxHeightChanged(event, groupIndex: number): void {
+  onDataLabelMaxHeightChanged(event: any, groupIndex: number): void {
     if (event.size.negative) {
       this.dataLabelMaxHeight.negative = Math.max(this.dataLabelMaxHeight.negative, event.size.height);
     } else {
@@ -128,7 +123,7 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     }
   }
 
-  getGroupScale(): ScaleBand<String> {
+  getGroupScale(): ScaleBand<string> {
     const spacing = this.groupDomain.length / (this.dims.height / this.groupPadding + 1);
     return scaleBand()
       .rangeRound([0, this.dims.width])
@@ -137,8 +132,8 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
       .domain(this.groupDomain);
   }
 
-  getInnerScale(): ScaleBand<String> {
-    const width = (this.groupScale as ScaleBand<String>).bandwidth();
+  getInnerScale(): ScaleBand<string> {
+    const width = (this.groupScale as ScaleBand<string>).bandwidth();
     const spacing = this.innerDomain.length / (width / this.barPadding + 1);
     return scaleBand().rangeRound([0, width]).paddingInner(spacing).domain(this.innerDomain);
   }
@@ -184,31 +179,11 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     return [min, max];
   }
 
-  getScaleType(values): ScaleType {
-    let date = true;
-    let num = true;
-    for (const value of values) {
-      if (!(value instanceof Date)) {
-        date = false;
-      }
-      if (typeof value !== 'number') {
-        num = false;
-      }
-    }
-    if (date) {
-      return ScaleType.Time;
-    }
-    if (num) {
-      return ScaleType.Linear;
-    }
-    return ScaleType.Ordinal;
-  }
-
   groupTransform(group: Series): string {
     return `translate(${this.groupScale(group.name)}, 0)`;
   }
 
-  onClick(data, group?: Series): void {
+  onClick(data: any, group?: Series): void {
     if (group) {
       data.series = group.name;
     }
@@ -259,7 +234,7 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     this.update();
   }
 
-  onDataItemHoverEnter(event, group: Series, fromLegend: boolean = false): void {
+  onDataItemHoverEnter(event: any, group: Series, fromLegend: boolean = false): void {
     const item = Object.assign({}, event);
     if (group) {
       item.series = group.name;
@@ -278,7 +253,7 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     this.dataItemHoverEnter.emit({ value: item, entries: this.activeEntries });
   }
 
-  onDataItemHoverLeave(event, group: Series, fromLegend: boolean = false): void {
+  onDataItemHoverLeave(event: any, group: Series, fromLegend: boolean = false): void {
     const item = Object.assign({}, event);
     if (group) {
       item.series = group.name;

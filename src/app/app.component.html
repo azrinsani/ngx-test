@@ -1,41 +1,72 @@
 <div>
-  <ga-ngx-charts-grouped-vertical-bar
-    [view]="[1000,500]"
-    [data]="data1"
-    [animations]= "true"
-    [roundEdges]= "true"
-    [showGridLines] = "true"
-    [showXAxisLabel]= "true"
-    [xAxisLabel]= "'Resources and Reserves Categories'"
-    [trimXAxisTicks]="false"
-    [autoRotateXAxisTicks]="true"
-    [showYAxisLabel]= "true"
-    [yAxisLabel]="'Tonnage (MT)'"
-    [groupPadding]="50"
-    [barPadding]="0"
+  <ga-custom-polar-chart
+    [view]="[750,750]"
+    [results]="polarChartData"
+    [animations]="true"
+    [showLegend]="false"
+    [gradient]="false"
+    [xAxis]="true"
+    [yAxis]="true"
+    [showXAxisLabel]="false"
+    [showYAxisLabel]="false"
+    [showGridLines]="true"
+    [rangeFillOpacity]="0"
     [roundDomains]="true"
-    [showDataLabel]="false"
-    [showLegend]="true">
-  </ga-ngx-charts-grouped-vertical-bar>
+    [tooltipDisabled]="false"
+    [showSeriesOnHover]="true"
+    [trimYAxisTicks]="true"
+    [maxYAxisTickLength]="16"
+    [yAxisMinScale]="-4"
+    [yAxisMaxScale]="6"
+    [autoScale]="false"
+    (select)="select($event)"
+    (activate)="activate($event)"
+    (deactivate)="deactivate($event)">
+  </ga-custom-polar-chart>
 </div>
-<div>
-  <ga-ngx-charts-grouped-vertical-bar
-    [view]="[1000,500]"
-    [data]="data2"
-    [animations]= "true"
-    [roundEdges]= "true"
-    [showGridLines] = "true"
-    [showXAxisLabel]= "true"
-    [xAxisLabel]= "'Resources and Reserves Categories'"
-    [trimXAxisTicks]="false"
-    [autoRotateXAxisTicks]="true"
-    [showYAxisLabel]= "true"
-    [yAxisLabel]="'Tonnage (MT)'"
-    [groupPadding]="50"
-    [barPadding]="0"
-    [roundDomains]="true"
-    [showDataLabel]="false"
-    [showLegend]="true"
-    [legendTitle]="'Legend'">
-  </ga-ngx-charts-grouped-vertical-bar>
-</div>
+
+
+<!--<div>-->
+<!--  <ga-ngx-charts-grouped-vertical-bar-->
+<!--    [view]="[1000,500]"-->
+<!--    [data]="data1"-->
+<!--    [animations]= "true"-->
+<!--    [roundEdges]= "true"-->
+<!--    [showGridLines] = "true"-->
+<!--    [showXAxisLabel]= "true"-->
+<!--    [xAxisLabel]= "'Resources and Reserves Categories'"-->
+<!--    [trimXAxisTicks]="false"-->
+<!--    [autoRotateXAxisTicks]="true"-->
+<!--    [showYAxisLabel]= "true"-->
+<!--    [yAxisLabel]="'Tonnage (MT)'"-->
+<!--    [groupPadding]="50"-->
+<!--    [barPadding]="0"-->
+<!--    [roundDomains]="true"-->
+<!--    [showDataLabel]="false"-->
+<!--    [showLegend]="true">-->
+<!--  </ga-ngx-charts-grouped-vertical-bar>-->
+<!--</div>-->
+<!--<div>-->
+<!--  <ga-ngx-charts-grouped-vertical-bar-->
+<!--    [view]="[1000,500]"-->
+<!--    [data]="data2"-->
+<!--    [animations]= "true"-->
+<!--    [roundEdges]= "true"-->
+<!--    [showGridLines] = "true"-->
+<!--    [showXAxisLabel]= "true"-->
+<!--    [xAxisLabel]= "'Resources and Reserves Categories'"-->
+<!--    [trimXAxisTicks]="false"-->
+<!--    [autoRotateXAxisTicks]="true"-->
+<!--    [showYAxisLabel]= "true"-->
+<!--    [yAxisLabel]="'Tonnage (MT)'"-->
+<!--    [groupPadding]="50"-->
+<!--    [barPadding]="0"-->
+<!--    [roundDomains]="true"-->
+<!--    [showDataLabel]="false"-->
+<!--    [showLegend]="true"-->
+<!--    [legendTitle]="'Legend Title'">-->
+<!--    <ng-template #tooltipTemplate let-model="model">-->
+<!--      <h3>{{ model.name }}: {{ model.value }}%</h3>-->
+<!--    </ng-template>-->
+<!--  </ga-ngx-charts-grouped-vertical-bar>-->
+<!--</div>-->
