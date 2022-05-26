@@ -50,7 +50,8 @@ export class CustomPolarChartComponent extends BaseChartComponent {
   @Input() showYAxisLabel: boolean;
   @Input() xAxisLabel: string;
   @Input() yAxisLabel: string;
-  @Input() showGridLines: boolean = true;
+  @Input() showXGridLines: boolean = true;
+  @Input() showYGridLines: boolean = true;
   @Input() activeEntries: any[] = [];
   @Input() schemeType: ScaleType;
   // This is the opacity fill of the enclosed shape
@@ -74,6 +75,7 @@ export class CustomPolarChartComponent extends BaseChartComponent {
   @Input() margin: number[] = [0, 20, 10, 20];
   // The label position can be vertically aligned on the sides or around the circle.
   @Input() labelPositionOnSides: boolean = false;
+  @Input() yAxisTicksInCentre: boolean = false;
   @Output() activate: EventEmitter<CustomChartEmitType> = new EventEmitter();
   @Output() deactivate: EventEmitter<CustomChartEmitType> = new EventEmitter();
   @ContentChild('tooltipTemplate') tooltipTemplate: TemplateRef<any>;
@@ -94,6 +96,7 @@ export class CustomPolarChartComponent extends BaseChartComponent {
   transformYAxis: string;
   xAxisHeight: number = 0;
   yAxisWidth: number = 0;
+  yAxisOffset: number = 0;
   filteredDomain: any;
   legendOptions: any;
   thetaTicks: any[];
@@ -137,7 +140,8 @@ export class CustomPolarChartComponent extends BaseChartComponent {
       ...this.dims,
       width: halfWidth
     };
-    this.transform = `translate(${this.dims.xOffset}, ${this.margin[0]})`;
+    const xOffset: number = this.yAxisTicksInCentre ? 0 : this.dims.xOffset;
+    this.transform = `translate(${xOffset}, ${this.margin[0]})`;
     this.transformYAxis = `translate(0, ${yOffset})`;
     this.labelOffset = this.dims.height + 40;
     this.transformPlot = `translate(${halfWidth}, ${halfHeight})`;
@@ -202,6 +206,12 @@ export class CustomPolarChartComponent extends BaseChartComponent {
           }
         }
       }
+    }
+    if (this.yAxisTicksInCentre) {
+      this.showYGridLines = false;
+      const halfWidth: number = Math.floor(this.dims.width / 2);
+      this.yAxisOffset = -1 * halfWidth - 10;
+      this.margin = [0,0,0,0];
     }
     this.radiusTicks = this.yAxisScale.ticks(Math.floor(this.dims.height / 50)).map(d => this.yScale(d, this.outerRadius));
   }

@@ -194,3 +194,8 @@
 .polar-series-path {
   pointer-events: none;
 }
+
+.polar-chart-y-axis.y-axis-ticks-in-centre > g.y.axis > g > g > g  > text {
+  font-size: 16px !important;
+  font-weight: bold;
+}

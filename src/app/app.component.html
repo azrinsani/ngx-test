@@ -9,7 +9,8 @@
     [yAxis]="true"
     [showXAxisLabel]="false"
     [showYAxisLabel]="false"
-    [showGridLines]="true"
+    [showYGridLines]="false"
+    [showXGridLines]="true"
     [rangeFillOpacity]="0"
     [roundDomains]="true"
     [tooltipDisabled]="false"
@@ -20,6 +21,7 @@
     [yAxisMaxScale]="6"
     [autoScale]="false"
     [labelPositionOnSides]="false"
+    [yAxisTicksInCentre]="true"
     (select)="select($event)"
     (activate)="activate($event)"
     (deactivate)="deactivate($event)">

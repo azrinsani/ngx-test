@@ -11,7 +11,7 @@
   <svg:g class="polar-chart chart" [attr.transform]="transform">
     <svg:g [attr.transform]="transformPlot">
       <svg:circle class="polar-chart-background" cx="0" cy="0" [attr.r]="this.outerRadius" />
-      <svg:g *ngIf="showGridLines">
+      <svg:g *ngIf="showXGridLines">
         <svg:circle
           *ngFor="let r of radiusTicks"
           class="gridline-path radial-gridline-path"
@@ -28,7 +28,7 @@
           [radius]="outerRadius"
           [label]="tick.label"
           [max]="outerRadius"
-          [value]="showGridLines ? 1 : outerRadius"
+          [value]="showXGridLines ? 1 : outerRadius"
           [explodeSlices]="true"
           [animations]="animations"
           [labelTrim]="labelTrim"
@@ -38,12 +38,14 @@
     </svg:g>
     <svg:g
       class="polar-chart-y-axis"
+      [ngClass]="{ 'y-axis-ticks-in-centre': yAxisTicksInCentre }"
       ngx-charts-y-axis
       [attr.transform]="transformYAxis"
       *ngIf="yAxis"
       [yScale]="yAxisScale"
       [dims]="yAxisDims"
-      [showGridLines]="showGridLines"
+      [yAxisOffset]="yAxisOffset"
+      [showGridLines]="showYGridLines"
       [showLabel]="showYAxisLabel"
       [labelText]="yAxisLabel"
       [trimTicks]="trimYAxisTicks"
