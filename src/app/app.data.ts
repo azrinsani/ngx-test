@@ -215,7 +215,7 @@ export const tonnageChartData : MultiSeries = [
   }
 ]
 
-export const depositGeochemistryQualityData : MultiSeries = [
+export const polarChartDataMock : MultiSeries = [
   {
     name: "Indicated resource",
     series: [

@@ -6,19 +6,17 @@ import {
   ViewEncapsulation,
   ChangeDetectionStrategy,
   ContentChild,
-  TemplateRef,
-  OnInit
+  TemplateRef
 } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
-import { scaleLinear, scaleTime, scalePoint } from 'd3-scale';
+import { scaleLinear, scaleTime, scalePoint, ScaleLinear } from 'd3-scale';
 import { curveLinearClosed } from 'd3-shape';
 import { calculateViewDimensions } from '@swimlane/ngx-charts';
 import { ColorHelper } from '@swimlane/ngx-charts';
 import { BaseChartComponent } from '@swimlane/ngx-charts';
-import { LegendPosition, isDate, Orientation, ScaleType, getScaleType } from '../shared/types/custom.chart.type';
+import { LegendPosition, isDate, Orientation, ScaleType, getScaleType, CustomChartEmitType, LegendOptionType } from '../../shared/types/custom.chart.type';
 import { ViewDimensions } from '@swimlane/ngx-charts';
-
-const twoPI = 2 * Math.PI;
+import { Series } from '@swimlane/ngx-charts/lib/models/chart-data.model';
 
 @Component({
   selector: 'ga-custom-polar-chart',
@@ -42,7 +40,7 @@ const twoPI = 2 * Math.PI;
     ])
   ]
 })
-export class CustomPolarChartComponent extends BaseChartComponent implements OnInit {
+export class CustomPolarChartComponent extends BaseChartComponent {
   @Input() showLegend: boolean = false;
   @Input() legendTitle: string = 'Legend';
   @Input() legendPosition: LegendPosition = LegendPosition.Right;
@@ -67,14 +65,17 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
   @Input() gradient: boolean = false;
   // The max value in the radius circle. Ignored if autoScale is TRUE
   @Input() yAxisMinScale: number = 0;
-  // The min value in the radius npmnpmcircle. Ignored if autoScale is TRUE
+  // The min value in the radius circle. Ignored if autoScale is TRUE
   @Input() yAxisMaxScale: number = 100;
   // autoScale needs to be false if yAxisMinScale and yAxisMaxScale is set
   @Input() autoScale: boolean = true;
   @Input() labelTrim: boolean = true;
   @Input() labelTrimSize: number = 10;
-  @Output() activate: EventEmitter<any> = new EventEmitter();
-  @Output() deactivate: EventEmitter<any> = new EventEmitter();
+  @Input() margin: number[] = [0, 20, 10, 20];
+  // The label position can be vertically aligned on the sides or around the circle.
+  @Input() labelPositionOnSides: boolean = false;
+  @Output() activate: EventEmitter<CustomChartEmitType> = new EventEmitter();
+  @Output() deactivate: EventEmitter<CustomChartEmitType> = new EventEmitter();
   @ContentChild('tooltipTemplate') tooltipTemplate: TemplateRef<any>;
 
   dims: ViewDimensions;
@@ -83,17 +84,14 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
   xDomain: any;
   yDomain: any;
   seriesDomain: any;
-  yScale: any; // -> rScale
-  xScale: any; // -> tScale
-  yAxisScale: any; // -> yScale
+  yScale: (domain: any[], height: number) => any;
+  xScale: (domain: any[], width: number) => any;
+  yAxisScale: any;
   colors: ColorHelper;
   scaleType: ScaleType;
   transform: string;
   transformPlot: string;
   transformYAxis: string;
-  transformXAxis: string;
-  // series: any; // ???
-  margin: number[] = [10, 20, 10, 20];
   xAxisHeight: number = 0;
   yAxisWidth: number = 0;
   filteredDomain: any;
@@ -101,12 +99,10 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
   thetaTicks: any[];
   radiusTicks: number[];
   outerRadius: number;
-  orientation = Orientation;
+  orientation: string = Orientation.Bottom;
   curve: any = curveLinearClosed;
 
-  ngOnInit() {
-  }
-
+  // Update and refreshes the chart
   update(): void {
     super.update();
     this.setDims();
@@ -116,7 +112,8 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
     this.setTicks();
   }
 
-  setDims() {
+  // Set the chart dimensions for display
+  setDims(): void {
     this.dims = calculateViewDimensions({
       width: this.width,
       height: this.height,
@@ -131,54 +128,53 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
       legendType: this.schemeType,
       legendPosition: this.legendPosition
     });
-    const halfWidth = Math.floor(this.dims.width / 2);
-    const halfHeight = Math.floor(this.dims.height / 2);
-    const outerRadius = (this.outerRadius = Math.min(halfHeight / 1.5, halfWidth / 1.5));
-    const yOffset = Math.max(0, halfHeight - outerRadius);
+    const halfWidth: number = Math.floor(this.dims.width / 2);
+    const halfHeight: number = Math.floor(this.dims.height / 2);
+    const additionalVerticalSpaceRatio: number = this.labelPositionOnSides ? 1.5 : 1.2;
+    const outerRadius: number = (this.outerRadius = Math.min(halfHeight / additionalVerticalSpaceRatio, halfWidth / additionalVerticalSpaceRatio));
+    const yOffset: number = Math.max(0, halfHeight - outerRadius);
     this.yAxisDims = {
       ...this.dims,
       width: halfWidth
     };
-
     this.transform = `translate(${this.dims.xOffset}, ${this.margin[0]})`;
     this.transformYAxis = `translate(0, ${yOffset})`;
     this.labelOffset = this.dims.height + 40;
     this.transformPlot = `translate(${halfWidth}, ${halfHeight})`;
   }
 
-  setScales() {
-    const xValues = this.getXValues();
+  // Set the scales based on polar angles
+  setScales(): void {
+    const xValues: any[] = this.getXValues();
     this.scaleType = getScaleType(xValues);
     this.xDomain = this.filteredDomain || this.getXDomain(xValues);
     this.yDomain = this.getYDomain();
     this.seriesDomain = this.getSeriesDomain();
-    this.xScale = this.getXScale(this.xDomain, twoPI);
+    this.xScale = this.getXScale(this.xDomain, 2 * Math.PI);
     this.yScale = this.getYScale(this.yDomain, this.outerRadius);
     this.yAxisScale = this.getYScale(this.yDomain.reverse(), this.outerRadius);
   }
 
-  setTicks() {
-    let tickFormat;
+  // Set the chart ticks location
+  setTicks(): void {
+    let tickFormat: (o: any) => any;
     if (this.xAxisTickFormatting) {
       tickFormat = this.xAxisTickFormatting;
-    } else if (this.xScale.tickFormat) {
-      tickFormat = this.xScale.tickFormat.apply(this.xScale, [5]);
     } else {
-      tickFormat = d => {
-        if (isDate(d)) {
-          return d.toLocaleDateString();
+      tickFormat = (dataValue): string => {
+        if (isDate(dataValue)) {
+          return dataValue.toLocaleDateString();
         }
-        return d.toLocaleString();
+        return dataValue.toLocaleString();
       };
     }
-    const outerRadius = this.outerRadius;
-    const s = 1.1;
-    this.thetaTicks = this.xDomain.map(d => {
-      const startAngle = this.xScale(d);
-      const dd = s * outerRadius * (startAngle > Math.PI ? -1 : 1);
-      const label = tickFormat(d);
-      const startPos = [outerRadius * Math.sin(startAngle), -outerRadius * Math.cos(startAngle)];
-      const pos = [dd, s * startPos[1]];
+    const outerRadius: number = this.outerRadius + 20;
+    this.thetaTicks = this.xDomain.map(dataValue => {
+      const startAngle: number = this.xScale(dataValue, 2 * Math.PI);
+      const dataPositionOnInRadius: number = 1.1 * outerRadius * (startAngle > Math.PI ? -1 : 1);
+      const label: number = tickFormat(dataValue);
+      const startPosition: [number, number] = [outerRadius * Math.sin(startAngle), -outerRadius * Math.cos(startAngle)];
+      const position: [number, number] = this.labelPositionOnSides ? [dataPositionOnInRadius, 1.1 * startPosition[1]] : [startPosition[0], 1 * startPosition[1]];
       return {
         innerRadius: 0,
         outerRadius,
@@ -186,33 +182,33 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
         endAngle: startAngle,
         value: outerRadius,
         label,
-        startPos,
-        pos
+        startPos: startPosition,
+        pos: position
       };
     });
-    const minDistance = 10;
+    const minDistance: number = 10;
 
-    /* from pie chart, abstract out -*/
-    for (let i = 0; i < this.thetaTicks.length - 1; i++) {
-      const a = this.thetaTicks[i];
-      for (let j = i + 1; j < this.thetaTicks.length; j++) {
-        const b = this.thetaTicks[j];
-        // if they're on the same side
-        if (b.pos[0] * a.pos[0] > 0) {
-          // if they're overlapping
-          const o = minDistance - Math.abs(b.pos[1] - a.pos[1]);
-          if (o > 0) {
-            // push the second up or down
-            b.pos[1] += Math.sign(b.pos[0]) * o;
+    // Space overlapped ticks when labels are on sides
+    if (this.labelPositionOnSides) {
+      for (let i: number = 0; i < this.thetaTicks.length - 1; i++) {
+        for (let j: number = i + 1; j < this.thetaTicks.length; j++) {
+          // if they're on the same side
+          if (this.thetaTicks[j].pos[0] * this.thetaTicks[i].pos[0] > 0) {
+            // if they're overlapping
+            const distance: number = minDistance - Math.abs(this.thetaTicks[j].pos[1] - this.thetaTicks[i].pos[1]);
+            if (distance > 0) {
+              this.thetaTicks[j].pos[1] += Math.sign(this.thetaTicks[j].pos[0]) * distance;
+            }
           }
         }
       }
     }
-    this.radiusTicks = this.yAxisScale.ticks(Math.floor(this.dims.height / 50)).map(d => this.yScale(d));
+    this.radiusTicks = this.yAxisScale.ticks(Math.floor(this.dims.height / 50)).map(d => this.yScale(d, this.outerRadius));
   }
 
+  // Get the X Chart Data Values
   getXValues(): any[] {
-    const values = [];
+    const values: any[] = [];
     for (const results of this.results) {
       for (const d of results.series) {
         if (!values.includes(d.name)) {
@@ -223,23 +219,24 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
     return values;
   }
 
-  getXDomain(values = this.getXValues()): any[] {
+  // Get the domain (range) of the X Values
+  getXDomain(values: any[] = this.getXValues()): any[] {
     if (this.scaleType === ScaleType.Time) {
-      const min = Math.min(...values);
-      const max = Math.max(...values);
+      const min: number = Math.min(...values);
+      const max: number = Math.max(...values);
       return [min, max];
     } else if (this.scaleType === ScaleType.Linear) {
       values = values.map(v => Number(v));
-      const min = Math.min(...values);
-      const max = Math.max(...values);
+      const min: number = Math.min(...values);
+      const max: number = Math.max(...values);
       return [min, max];
     }
     return values;
   }
 
+  // Get the X Chart Data Values
   getYValues(): any[] {
-    const domain = [];
-
+    const domain: any[] = [];
     for (const results of this.results) {
       for (const d of results.series) {
         if (domain.indexOf(d.value) < 0) {
@@ -260,9 +257,10 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
     return domain;
   }
 
-  getYDomain(domain = this.getYValues()): any[] {
-    let min = this.yAxisMinScale;
-    let max = this.yAxisMaxScale;
+  // Get the domain (range) of the Y Values
+  getYDomain(domain: any[] = this.getYValues()): any[] {
+    let min: number = this.yAxisMinScale;
+    let max: number = this.yAxisMaxScale;
     if (this.autoScale) {
       min = Math.min(...domain);
       max = Math.max(...domain);
@@ -270,44 +268,50 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
     return [min, max];
   }
 
+  // Get the series names
   getSeriesDomain(): any[] {
     return this.results.map(d => d.name);
   }
 
-  getXScale(domain, width: number): any {
+  // Get the scale for X data
+  getXScale(domain: any[], width: number): any {
     switch (this.scaleType) {
       case ScaleType.Time:
         return scaleTime().range([0, width]).domain(domain);
       case ScaleType.Linear: {
-        const scale = scaleLinear().range([0, width]).domain(domain);
+        const scale: ScaleLinear<number, number> = scaleLinear().range([0, width]).domain(domain);
         return this.roundDomains ? scale.nice() : scale;
       }
       default:
         return scalePoint()
-          .range([0, width - twoPI / domain.length])
+          .range([0, width - 2 * Math.PI / domain.length])
           .padding(0)
           .domain(domain);
     }
   }
 
-  getYScale(domain, height: number): any {
-    const scale = scaleLinear().range([0, height]).domain(domain);
+  // Get the scale for Y data
+  getYScale(domain: any[], height: number): any {
+    const scale: any = scaleLinear().range([0, height]).domain(domain);
     return this.roundDomains ? scale.nice() : scale;
   }
 
-  onClick(data, series?): void {
+  // When a user clicks on a point
+  onClick(data: Series, series?: any): void {
     if (series) {
       data.series = series.name;
     }
     this.select.emit(data);
   }
 
+  // Set the colors for the chart
   setColors(): void {
-    const domain = this.schemeType === ScaleType.Ordinal ? this.seriesDomain : this.yDomain.reverse();
+    const domain: any = this.schemeType === ScaleType.Ordinal ? this.seriesDomain : this.yDomain.reverse();
     this.colors = new ColorHelper(this.scheme, this.schemeType, domain, this.customColors);
   }
 
-  getLegendOptions() {
+  // Get the options for the legend to be displayed
+  getLegendOptions(): LegendOptionType {
     if (this.schemeType === ScaleType.Ordinal) {
       return {
         scaleType: this.schemeType,
@@ -326,38 +330,41 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
     };
   }
 
+  // Redraws the Y Axis based on new width
   updateYAxisWidth({ width }: { width: number }): void {
     this.yAxisWidth = width;
     this.update();
   }
 
+  // Redraws the X Axis based on new width
   updateXAxisHeight({ height }: { height: number }): void {
     this.xAxisHeight = height;
     this.update();
   }
 
-  onActivate(item): void {
-    const idx = this.activeEntries.findIndex(d => {
+  // When mouse hovers over a data point
+  onActivate(item: any): void {
+    const idx: number = this.activeEntries.findIndex(d => {
       return d.name === item.name && d.value === item.value;
     });
     if (idx > -1) {
       return;
     }
     this.activeEntries = this.showSeriesOnHover ? [item, ...this.activeEntries] : this.activeEntries;
-    this.activate.emit({ value: item, entries: this.activeEntries });
+    this.activate.emit(<CustomChartEmitType>{ value: item, entries: this.activeEntries });
   }
 
-  onDeactivate(item): void {
-    const idx = this.activeEntries.findIndex(d => {
+  // When mouse leaves the hovering over a data point
+  onDeactivate(item: any): void {
+    const idx: number = this.activeEntries.findIndex(d => {
       return d.name === item.name && d.value === item.value;
     });
-
     this.activeEntries.splice(idx, 1);
     this.activeEntries = [...this.activeEntries];
-
-    this.deactivate.emit({ value: item, entries: this.activeEntries });
+    this.deactivate.emit(<CustomChartEmitType>{ value: item, entries: this.activeEntries });
   }
 
+  // Deactivate all selected data points
   deactivateAll(): void {
     this.activeEntries = [...this.activeEntries];
     for (const entry of this.activeEntries) {
@@ -366,7 +373,8 @@ export class CustomPolarChartComponent extends BaseChartComponent implements OnI
     this.activeEntries = [];
   }
 
-  trackBy(index: number, item): string {
+  // An ID for each series for tracking
+  trackBy(index: number, item: any): string {
     return `${item.name}`;
   }
 }

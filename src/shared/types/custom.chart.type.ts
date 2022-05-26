@@ -1,3 +1,5 @@
+import { ColorHelper } from "@swimlane/ngx-charts";
+
 export interface LegendOptions {
   colors: any;
   domain: any[];
@@ -15,11 +17,11 @@ export enum CustomChartType {
   ScaleLegend = 'scaleLegend',
   Legend = 'legend'
 }
-export function isDate(value): boolean {
+export function isDate(value: any): boolean {
   return toString.call(value) === '[object Date]';
 }
 
-export function isNumber(value): boolean {
+export function isNumber(value: any): boolean {
   return typeof value === 'number';
 }
 
@@ -40,12 +42,12 @@ export enum Orientation {
 // Returns  'time', 'linear' or 'ordinal'
 export function getScaleType(values: any[], checkDateType: boolean = true): ScaleType {
   if (checkDateType) {
-    const allDates = values.every(value => value instanceof Date);
+    const allDates: boolean = values.every(value => value instanceof Date);
     if (allDates) {
       return ScaleType.Time;
     }
   }
-  const allNumbers = values.every(value => typeof value === 'number');
+  const allNumbers: boolean = values.every(value => typeof value === 'number');
   if (allNumbers) {
     return ScaleType.Linear;
   }
@@ -55,4 +57,17 @@ export function getScaleType(values: any[], checkDateType: boolean = true): Scal
 export enum BarOrientation {
   Vertical = 'vertical',
   Horizontal = 'horizontal'
+}
+
+export interface CustomChartEmitType {
+  value: number;
+  entries: any[];
+}
+
+export interface LegendOptionType {
+  scaleType: ScaleType;
+  colors: ColorHelper;
+  domain: any;
+  title: string;
+  position: LegendPosition;
 }

@@ -1,6 +1,6 @@
 <div>
   <ga-custom-polar-chart
-    [view]="[750,750]"
+    [view]="[750,550]"
     [results]="polarChartData"
     [animations]="true"
     [showLegend]="false"
@@ -19,6 +19,7 @@
     [yAxisMinScale]="-4"
     [yAxisMaxScale]="6"
     [autoScale]="false"
+    [labelPositionOnSides]="false"
     (select)="select($event)"
     (activate)="activate($event)"
     (deactivate)="deactivate($event)">

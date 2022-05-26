@@ -52,6 +52,7 @@ export interface DepositSummaryReportFeatureType {
   };
   geometry_name: string;
   properties: DepositSummaryReportType | DepositSummaryGeochemistryFeaturePropertiesType;
+  bbox: number[];
 }
 
 export interface DepositSummaryGeochemistryFeaturePropertiesType {
@@ -406,6 +407,7 @@ export interface DepositSummaryWfsType {
     type: string;
     properties: any;
   };
+  bbox: number[];
 }
 
 export interface DepositSummaryReportType {
@@ -479,7 +481,7 @@ export interface DepositResourceReservesPropertiesType {
   GRADE_NO: number;
   COMMODITY_CODE: string;
   COMMODITY_NAME: string;
-  GRADE_UNIT: 'g/t' | '%';
+  GRADE_UNIT: 'g/t' | '%' | 'ppm' | 'ppb';
   PROVEN_GRADE: number;
   PROBABLE_GRADE: number;
   PROVEN_PROBABLE_GRADE: number;
@@ -492,6 +494,7 @@ export interface DepositResourceReservesPropertiesType {
 }
 
 export interface DepositResourcesReservesTableRowType extends DepositResourcesReservesTotalType {
+  recordDate: string;
   depositNumber: number;
   depositName: string;
   commodity: string;
@@ -505,7 +508,7 @@ export interface DepositResourcesReservesTotalType {
   tonnage: number;
   tonnageUnits: 'Mt' | 'Kt';
   grade: number;
-  gradeUnits: 'g/t' | '%';
+  gradeUnits: 'g/t' | '%' | 'ppm' | 'ppb';
   containedMetal: number;
   containedMetalUnits: 'Mt' | 'Kt';
 }

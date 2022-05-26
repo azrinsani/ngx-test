@@ -4,11 +4,10 @@ import { By } from '@angular/platform-browser';
 import * as FileSaver from 'file-saver';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import any = jasmine.any;
-import { DepositSummaryReportGetFeaturesResultType } from "./deposit.summary.report.type";
+import { DepositSummaryWfsType } from "./deposit.summary.report.type";
 import { mockDepositGeochemistryJson } from "./deposit.geochemistry.mock";
 
 describe('DepositGeochemistryComponent', () => {
-
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -28,11 +27,11 @@ describe('DepositGeochemistryComponent', () => {
   });
 
   it('can instantiate', () => {
-    // expect(component).not.toBeNull();
+    expect(1).toEqual(1);
   });
 
   it('should transform data into Polar Chart format', () => {
-    const getFeatureResult: DepositSummaryReportGetFeaturesResultType = JSON.parse(mockDepositGeochemistryJson);
+    const getFeatureResult: DepositSummaryWfsType = JSON.parse(mockDepositGeochemistryJson);
 
   });
 
