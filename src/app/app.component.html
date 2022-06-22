@@ -1,32 +1,56 @@
 <div>
-  <ga-custom-polar-chart
-    [view]="[750,550]"
-    [results]="polarChartData"
-    [animations]="true"
-    [showLegend]="false"
-    [gradient]="false"
-    [xAxis]="true"
-    [yAxis]="true"
-    [showXAxisLabel]="false"
-    [showYAxisLabel]="false"
-    [showYGridLines]="false"
-    [showXGridLines]="true"
-    [rangeFillOpacity]="0"
-    [roundDomains]="true"
-    [tooltipDisabled]="false"
-    [showSeriesOnHover]="true"
-    [trimYAxisTicks]="true"
-    [maxYAxisTickLength]="16"
-    [yAxisMinScale]="-4"
-    [yAxisMaxScale]="6"
-    [autoScale]="false"
-    [labelPositionOnSides]="false"
-    [yAxisTicksInCentre]="true"
-    (select)="select($event)"
-    (activate)="activate($event)"
-    (deactivate)="deactivate($event)">
-  </ga-custom-polar-chart>
+  <ga-box-plot-chart *ngIf="!errorMessage"
+                     [view]="[750,550]"
+                     [xAxis]="false"
+                     [yAxis]="true"
+                     [results]="boxPlotData"
+                     [showXAxisLabel]="true"
+                     [showYAxisLabel]="true"
+                     [yAxisLabel]="yAxisLabel"
+                     [yAxisTicks]="yAxisTicks"
+                     [yScaleMin]="yScaleMin"
+                     [yScaleMax]="yScaleMax"
+                     [quartile1]="statistics.percentile25"
+                     [quartile3]="statistics.percentile75"
+                     [median]="statistics.median"
+                     [nonOutlierMin]="nonOutlierMin"
+                     [nonOutlierMax]="nonOutlierMax"
+                     [scaleType]="'linear'"
+                     [scheme]="colorScheme"
+                     [legend]="legendEnabled"
+                     [legendPosition]="'bottom'">
+  </ga-box-plot-chart>
 </div>
+
+<!--<div>-->
+<!--  <ga-custom-polar-chart-->
+<!--    [view]="[750,550]"-->
+<!--    [results]="polarChartData"-->
+<!--    [animations]="true"-->
+<!--    [showLegend]="false"-->
+<!--    [gradient]="false"-->
+<!--    [xAxis]="true"-->
+<!--    [yAxis]="true"-->
+<!--    [showXAxisLabel]="false"-->
+<!--    [showYAxisLabel]="false"-->
+<!--    [showYGridLines]="false"-->
+<!--    [showXGridLines]="true"-->
+<!--    [rangeFillOpacity]="0"-->
+<!--    [roundDomains]="true"-->
+<!--    [tooltipDisabled]="false"-->
+<!--    [showSeriesOnHover]="true"-->
+<!--    [trimYAxisTicks]="true"-->
+<!--    [maxYAxisTickLength]="16"-->
+<!--    [yAxisMinScale]="-4"-->
+<!--    [yAxisMaxScale]="6"-->
+<!--    [autoScale]="false"-->
+<!--    [labelPositionOnSides]="false"-->
+<!--    [yAxisTicksInCentre]="true"-->
+<!--    (select)="select($event)"-->
+<!--    (activate)="activate($event)"-->
+<!--    (deactivate)="deactivate($event)">-->
+<!--  </ga-custom-polar-chart>-->
+<!--</div>-->
 
 
 <!--<div>-->
@@ -49,6 +73,9 @@
 <!--    [showLegend]="true">-->
 <!--  </ga-ngx-charts-grouped-vertical-bar>-->
 <!--</div>-->
+
+
+
 <!--<div>-->
 <!--  <ga-ngx-charts-grouped-vertical-bar-->
 <!--    [view]="[1000,500]"-->

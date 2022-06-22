@@ -16,6 +16,8 @@ export class AppComponent {
   data1: MultiSeries = tonnageChartData;
   data2: MultiSeries = gradeChartData;
   polarChartData: MultiSeries = polarChartDataMock;
+  boxPlotData: MultiSeries;
+
   constructor() {
     const getFeatureResult: DepositSummaryWfsType = JSON.parse(mockDepositGeochemistryJson);
     this.polarChartData = this.transformToPolarChartData(getFeatureResult);
