@@ -9,13 +9,6 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
   selector: 'g[ga-box-plot-series-chart-box]',
   template: `
     <svg:defs>
-      <svg:g
-        *ngIf="hasGradient"
-        ngx-charts-svg-linear-gradient
-        [orientation]="BarOrientation.Vertical"
-        [name]="gradientId"
-        [stops]="gradientStops"
-      />
       <svg:mask [attr.id]="maskLineId">
         <svg:g>
           <rect height="100%" width="100%" fill="white" fill-opacity="1" />
@@ -24,6 +17,7 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
       </svg:mask>
     </svg:defs>
     <svg:g>
+      <!-- The Box-->
       <svg:path
         class="bar"
         role="img"
@@ -34,10 +28,10 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
         [attr.stroke]="strokeColor"
         [attr.stroke-width]="boxStrokeWidth"
         [attr.aria-label]="ariaLabel"
-        [attr.fill]="hasGradient ? gradientFill : fill"
+        [attr.fill]="fill"
         (click)="select.emit(data)"
       />
-      <!-- Median Line-->
+      <!-- The Box Median Line-->
       <svg:line
         *ngFor="let line of lineCoordinates; let i = index"
         class="bar-line"
@@ -66,8 +60,6 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   @Input() y: number;
   @Input() lineCoordinates: LineCoordinates;
   @Input() roundEdges: boolean = true;
-  @Input() gradient: boolean = false;
-  @Input() gradientStops: Gradient[];
   @Input() offset: number = 0;
   @Input() isActive: boolean = false;
   @Input() animations: boolean = true;
@@ -84,10 +76,7 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   oldPath: string;
   boxPath: string;
   oldLineCoordinates: LineCoordinates;
-  gradientId: string;
-  gradientFill: string;
   initialized: boolean = false;
-  hasGradient: boolean = false;
   hideBar: boolean = false;
   maskLine: string;
   maskLineId: string;
@@ -110,14 +99,6 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   // Updates the Chart
   update(): void {
     this.boxStrokeWidth = Math.max(this.strokeWidth, 1);
-    this.gradientId = 'grad' + this.getNewId().toString();
-    this.gradientFill = `url(#${this.gradientId})`;
-    if (this.gradient) {
-      this.gradientStops = this.getGradient();
-      this.hasGradient = true;
-    } else {
-      this.hasGradient = false;
-    }
     this.updateLineElement();
     this.updatePathElement();
     this.hideBar = this.noBarWhenZero && this.height === 0;

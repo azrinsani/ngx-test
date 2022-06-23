@@ -115,8 +115,6 @@ export interface IBoxModel {
   tooltipText?: string;
   ariaLabel?: string;
   color?: string;
-  // TODO: Replace by IColorGradient Interface
-  gradientStops?: Array<{ offset: number; color: string; opacity: number }>;
 }
 
 export interface Gradient {

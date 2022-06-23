@@ -26,13 +26,11 @@ import { BoxChartSeries, DataItem, IBoxModel, IVector2D, ScaleType } from 'src/s
       [x]="box.x"
       [y]="box.y"
       [roundEdges]="box.roundEdges"
-      [fill]="box.color"
-      [gradientStops]="box.gradientStops"
+      [fill]="boxColor"
       [strokeColor]="strokeColor"
       [strokeWidth]="strokeWidth"
       [data]="box"
       [lineCoordinates]="box.lineCoordinates"
-      [gradient]="gradient"
       [ariaLabel]="box.ariaLabel"
       (select)="onClick($event)"
       (activate)="activate.emit($event)"
@@ -68,6 +66,7 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   @Input() yScale: ScaleLinear<number, number>;
   @Input() colors: ColorHelper;
   @Input() animations: boolean = true;
+  @Input() boxColor: string;
   @Input() strokeColor: string;
   @Input() strokeWidth: number;
   @Input() tooltipDisabled: boolean = false;
@@ -132,7 +131,6 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
       box.color = this.colors.getColor(seriesName);
     } else {
       box.color = this.colors.getColor(this.quartiles[1]);
-      box.gradientStops = this.colors.getLinearGradientStops(this.quartiles[0], this.quartiles[2]);
     }
     const tooltipLabel = formattedLabel;
     const formattedTooltipLabel = `

@@ -29,11 +29,9 @@ import { scaleBand, ScaleBand } from 'd3';
   ]
 })
 export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
-  /** Show or hide the legend. */
   @Input() legend: boolean = false;
   @Input() legendPosition: LegendPosition = LegendPosition.Right;
   @Input() legendTitle: string = 'Legend';
-  /** I think it is better to handle legend options as single Input object of type ILegendOptions */
   @Input() legendOptionsConfig: LegendOptions;
   @Input() showGridLines: boolean = true;
   @Input() xAxis: boolean = true;
@@ -44,10 +42,8 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   @Input() xAxisLabel: string;
   @Input() yAxisLabel: string;
   @Input() roundEdges: boolean = true;
-  @Input() strokeColor: string = '#FFFFFF';
-  @Input() strokeWidth: number = 2;
+  @Input() boxColor: string = '#888888';
   @Input() tooltipDisabled: boolean = false;
-  @Input() gradient: boolean;
   @Input() whiskerStrokeWidth: number = 5;
   @Input() medianLineWidth: number = 5;
 
