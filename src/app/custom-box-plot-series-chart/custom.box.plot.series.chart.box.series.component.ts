@@ -20,14 +20,14 @@ import { BoxChartSeries, DataItem, IBoxModel, IVector2D, ScaleType } from 'src/s
     <svg:g
       ga-box-plot-series-chart-box
       [@animationState]="'active'"
-      [@.disabled]="!animations"
+      [@.disabled]="true"
       [width]="box.width"
       [height]="box.height"
       [x]="box.x"
       [y]="box.y"
       [roundEdges]="box.roundEdges"
       [fill]="boxColor"
-      [strokeColor]="strokeColor"
+      [boxColor]="boxColor"
       [strokeWidth]="strokeWidth"
       [data]="box"
       [lineCoordinates]="box.lineCoordinates"
@@ -42,7 +42,6 @@ import { BoxChartSeries, DataItem, IBoxModel, IVector2D, ScaleType } from 'src/s
       [tooltipTitle]="tooltipTitle"
       [tooltipTemplate]="tooltipTemplate"
       [tooltipContext]="box.data"
-      [animations]="animations"
       [whiskerStrokeWidth]="whiskerStrokeWidth"
       [medianLineWidth]="medianLineWidth"
     ></svg:g>
@@ -65,10 +64,9 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   @Input() xScale: ScaleBand<string>;
   @Input() yScale: ScaleLinear<number, number>;
   @Input() colors: ColorHelper;
-  @Input() animations: boolean = true;
   @Input() boxColor: string;
-  @Input() strokeColor: string;
   @Input() strokeWidth: number;
+  @Input() boxWidth: number;
   @Input() tooltipDisabled: boolean = false;
   @Input() tooltipTemplate: TemplateRef<any>;
   @Input() tooltipPlacement: PlacementTypes;
@@ -76,6 +74,7 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   @Input() roundEdges: boolean;
   @Input() gradient: boolean = false;
   @Input() whiskerStrokeWidth: number;
+  @Input() whiskerNotchLineWidth: number = 10;
   @Input() medianLineWidth: number;
 
   @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
@@ -152,27 +151,26 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
     const commonX = this.xScale(seriesName);
     const offsetX = commonX + barWidth / 2;
     const medianLineWidth = Math.max(barWidth + 4 * this.strokeWidth, 1);
-    const whiskerLineWidth = Math.max(barWidth / 3, 1);
     const whiskerZero = this.yScale(whiskers[0]);
     const whiskerOne = this.yScale(whiskers[1]);
     const median = this.yScale(quartiles[1]);
-    const topLine: IVector2D = {
-      v1: { x: offsetX + whiskerLineWidth / 2, y: whiskerZero },
-      v2: { x: offsetX - whiskerLineWidth / 2, y: whiskerZero }
+    const whiskerTopNotchLine: IVector2D = {
+      v1: { x: offsetX + this.whiskerNotchLineWidth / 2, y: whiskerZero },
+      v2: { x: offsetX - this.whiskerNotchLineWidth / 2, y: whiskerZero }
     };
     const medianLine: IVector2D = {
       v1: { x: offsetX + medianLineWidth / 2, y: median },
       v2: { x: offsetX - medianLineWidth / 2, y: median }
     };
-    const bottomLine: IVector2D = {
-      v1: { x: offsetX + whiskerLineWidth / 2, y: whiskerOne },
-      v2: { x: offsetX - whiskerLineWidth / 2, y: whiskerOne }
+    const whiskerBottomNotchLine: IVector2D = {
+      v1: { x: offsetX + this.whiskerNotchLineWidth / 2, y: whiskerOne },
+      v2: { x: offsetX - this.whiskerNotchLineWidth / 2, y: whiskerOne }
     };
-    const verticalLine: IVector2D = {
+    const whiskerVerticalLine: IVector2D = {
       v1: { x: offsetX, y: whiskerZero },
       v2: { x: offsetX, y: whiskerOne }
     };
-    return [verticalLine, topLine, medianLine, bottomLine];
+    return [whiskerVerticalLine, whiskerTopNotchLine, medianLine, whiskerBottomNotchLine];
   }
 
   // Updates the tooltip settings during any changes

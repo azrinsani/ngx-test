@@ -11,8 +11,8 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
     <svg:defs>
       <svg:mask [attr.id]="maskLineId">
         <svg:g>
-          <rect height="100%" width="100%" fill="white" fill-opacity="1" />
-          <path class="bar" [attr.d]="boxPath" fill="black" fill-opacity="1" />
+          <rect height="100%" width="100%" fill="white" fill-opacity="1"/>
+          <path class="bar" [attr.d]="boxPath" fill="black" fill-opacity="1"/>
         </svg:g>
       </svg:mask>
     </svg:defs>
@@ -31,7 +31,7 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
         [attr.fill]="fill"
         (click)="select.emit(data)"
       />
-      <!-- The Box Median Line-->
+      <!-- The Box Line - There are 4 lines, 0: Vertical Line , 1: Bottom Bottom Notch Line, 2: Median Line, 4: Top Notch Line -->
       <svg:line
         *ngFor="let line of lineCoordinates; let i = index"
         class="bar-line"
@@ -40,7 +40,7 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
         [attr.y1]="line.v1.y"
         [attr.x2]="line.v2.x"
         [attr.y2]="line.v2.y"
-        [attr.stroke]="'#000000'"
+        [attr.stroke]="i === 2 ? medianLineColor : boxColor"
         [attr.stroke-width]="i === 2 ? medianLineWidth : whiskerStrokeWidth"
         [attr.mask]="undefined"
         fill="none"
@@ -50,7 +50,8 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
-  @Input() strokeColor: string;
+  @Input() boxColor: string;
+  @Input() medianLineColor: string = '#000000';
   @Input() strokeWidth: number;
   @Input() fill: string;
   @Input() data: IBoxModel;
@@ -62,7 +63,6 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   @Input() roundEdges: boolean = true;
   @Input() offset: number = 0;
   @Input() isActive: boolean = false;
-  @Input() animations: boolean = true;
   @Input() ariaLabel: string;
   @Input() noBarWhenZero: boolean = true;
   @Input() whiskerStrokeWidth: number = 10;
@@ -80,7 +80,6 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   hideBar: boolean = false;
   maskLine: string;
   maskLineId: string;
-  boxStrokeWidth: number;
   usedIds: string[] = [];
 
   constructor(element: ElementRef, protected cd: ChangeDetectorRef) {
@@ -120,16 +119,7 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   updatePathElement(): void {
     const nodeBar = select(this.nativeElm).selectAll('.bar');
     const path = this.getPath();
-    if (this.animations) {
-      nodeBar
-        .attr('d', this.oldPath)
-        .transition()
-        .ease(easeSinInOut)
-        .duration(500)
-        .attrTween('d', this.pathTween(path, 4));
-    } else {
-      nodeBar.attr('d', path);
-    }
+    nodeBar.attr('d', path);
     this.oldPath = path;
   }
 
@@ -138,26 +128,11 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
     const lineEl = select(this.nativeElm).selectAll('.bar-line');
     const lineCoordinates = this.lineCoordinates;
     const oldLineCoordinates = this.oldLineCoordinates;
-    if (this.animations) {
-      lineEl
-        .attr('x1', (_, index) => oldLineCoordinates[index].v1.x)
-        .attr('y1', (_, index) => oldLineCoordinates[index].v1.y)
-        .attr('x2', (_, index) => oldLineCoordinates[index].v2.x)
-        .attr('y2', (_, index) => oldLineCoordinates[index].v2.y)
-        .transition()
-        .ease(easeSinInOut)
-        .duration(500)
-        .attr('x1', (_, index) => lineCoordinates[index].v1.x)
-        .attr('y1', (_, index) => lineCoordinates[index].v1.y)
-        .attr('x2', (_, index) => lineCoordinates[index].v2.x)
-        .attr('y2', (_, index) => lineCoordinates[index].v2.y);
-    } else {
-      lineEl
-        .attr('x1', (_, index) => lineCoordinates[index].v1.x)
-        .attr('y1', (_, index) => lineCoordinates[index].v1.y)
-        .attr('x2', (_, index) => lineCoordinates[index].v2.x)
-        .attr('y2', (_, index) => lineCoordinates[index].v2.y);
-    }
+    lineEl
+      .attr('x1', (_, index) => lineCoordinates[index].v1.x)
+      .attr('y1', (_, index) => lineCoordinates[index].v1.y)
+      .attr('x2', (_, index) => lineCoordinates[index].v2.x)
+      .attr('y2', (_, index) => lineCoordinates[index].v2.y);
     this.oldLineCoordinates = [...lineCoordinates];
   }
 
@@ -201,12 +176,7 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
 
   // Gets the starting path the animation
   getStartingPath(): string {
-    if (!this.animations) {
-      return this.getPath();
-    }
-    const radius = this.roundEdges ? 1 : 0;
-    const { x, y } = this.lineCoordinates[2].v1;
-    return this.getRoundedRectanglePath(x - this.width, y - 1, this.width, 2, radius, this.edges);
+    return this.getPath();
   }
 
   // Returns the rectangle path
@@ -218,12 +188,7 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   }
 
   getStartingLineCoordinates(): LineCoordinates {
-    if (!this.animations) {
-      return [...this.lineCoordinates];
-    }
-    const lineCoordinates: LineCoordinates = cloneDeep(this.lineCoordinates);
-    lineCoordinates[1].v1.y = lineCoordinates[1].v2.y = lineCoordinates[3].v1.y = lineCoordinates[3].v2.y = lineCoordinates[0].v1.y = lineCoordinates[0].v2.y = lineCoordinates[2].v1.y;
-    return lineCoordinates;
+    return [...this.lineCoordinates];
   }
 
   getRadius(): number {

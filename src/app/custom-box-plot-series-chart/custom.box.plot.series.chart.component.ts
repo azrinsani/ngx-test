@@ -45,6 +45,7 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   @Input() boxColor: string = '#888888';
   @Input() tooltipDisabled: boolean = false;
   @Input() whiskerStrokeWidth: number = 5;
+  @Input() whiskerNotchLineWidth: number = 10;
   @Input() medianLineWidth: number = 5;
 
   @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
