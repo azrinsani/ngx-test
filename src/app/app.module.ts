@@ -7,6 +7,7 @@ import { CommonModule} from "@angular/common";
 import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { CustomGroupedVerticalBarModule } from "./custom-grouped-vertical-bar-chart/custom.grouped.vertical.bar.module";
 import { CustomPolarChartModule } from "./custom-polar-chart/custom.polar.chart.module";
+import { CustomBoxPlotSeriesChartModule } from "./custom-box-plot-series-chart/custom.box.plot.series.chart.module";
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { CustomPolarChartModule } from "./custom-polar-chart/custom.polar.chart.
     BrowserModule,
     CustomBarVerticalModule,
     CustomGroupedVerticalBarModule,
+    CustomBoxPlotSeriesChartModule,
     CustomPolarChartModule,
     AppRoutingModule,
     BrowserAnimationsModule,

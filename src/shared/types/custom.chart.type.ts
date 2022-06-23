@@ -71,3 +71,59 @@ export interface LegendOptionType {
   title: string;
   position: LegendPosition;
 }
+
+export type StringOrNumberOrDate = string | number | Date;
+
+export interface DataItem {
+  name: StringOrNumberOrDate;
+  value: number;
+  extra?: any;
+  min?: number;
+  max?: number;
+  label?: string;
+}
+
+export interface IVector2D {
+  v1: IPoint;
+  v2: IPoint;
+}
+
+export interface IPoint {
+  x: number;
+  y: number;
+}
+
+export interface BoxChartSeries {
+  name: StringOrNumberOrDate;
+  series: DataItem[];
+}
+
+export interface BoxChartMultiSeries extends Array<BoxChartSeries> {}
+
+export interface IBoxModel {
+  value: number | Date;
+  label: StringOrNumberOrDate;
+  data: DataItem[];
+  formattedLabel: string;
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+  roundEdges: boolean;
+  lineCoordinates: [IVector2D, IVector2D, IVector2D, IVector2D];
+  quartiles: number[];
+  tooltipText?: string;
+  ariaLabel?: string;
+  color?: string;
+  // TODO: Replace by IColorGradient Interface
+  gradientStops?: Array<{ offset: number; color: string; opacity: number }>;
+}
+
+export interface Gradient {
+  offset: number;
+  originalOffset?: number;
+  color: string;
+  opacity: number;
+}
+
+export type LineCoordinates = [IVector2D, IVector2D, IVector2D, IVector2D];
