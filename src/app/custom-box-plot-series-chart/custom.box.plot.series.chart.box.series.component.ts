@@ -45,6 +45,8 @@ import { BoxChartSeries, DataItem, IBoxModel, IVector2D, ScaleType } from 'src/s
       [tooltipTemplate]="tooltipTemplate"
       [tooltipContext]="box.data"
       [animations]="animations"
+      [whiskerStrokeWidth]="whiskerStrokeWidth"
+      [medianLineWidth]="medianLineWidth"
     ></svg:g>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,6 +76,8 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   @Input() tooltipType: StyleTypes;
   @Input() roundEdges: boolean;
   @Input() gradient: boolean = false;
+  @Input() whiskerStrokeWidth: number;
+  @Input() medianLineWidth: number;
 
   @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
   @Output() activate: EventEmitter<IBoxModel> = new EventEmitter();

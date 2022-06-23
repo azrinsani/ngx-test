@@ -48,6 +48,8 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   @Input() strokeWidth: number = 2;
   @Input() tooltipDisabled: boolean = false;
   @Input() gradient: boolean;
+  @Input() whiskerStrokeWidth: number = 5;
+  @Input() medianLineWidth: number = 5;
 
   @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
   @Output() activate: EventEmitter<IBoxModel> = new EventEmitter();

@@ -73,6 +73,8 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   @Input() animations: boolean = true;
   @Input() ariaLabel: string;
   @Input() noBarWhenZero: boolean = true;
+  @Input() whiskerStrokeWidth: number = 10;
+  @Input() medianLineWidth: number = 10;
   @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
   @Output() activate: EventEmitter<IBoxModel> = new EventEmitter();
   @Output() deactivate: EventEmitter<IBoxModel> = new EventEmitter();
@@ -90,8 +92,6 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   maskLine: string;
   maskLineId: string;
   boxStrokeWidth: number;
-  whiskerStrokeWidth: number;
-  medianLineWidth: number;
   usedIds: string[] = [];
 
   constructor(element: ElementRef, protected cd: ChangeDetectorRef) {
@@ -110,8 +110,6 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   // Updates the Chart
   update(): void {
     this.boxStrokeWidth = Math.max(this.strokeWidth, 1);
-    this.whiskerStrokeWidth = Math.max(this.strokeWidth / 2, 1);
-    this.medianLineWidth = 1.5 * this.strokeWidth;
     this.gradientId = 'grad' + this.getNewId().toString();
     this.gradientFill = `url(#${this.gradientId})`;
     if (this.gradient) {
