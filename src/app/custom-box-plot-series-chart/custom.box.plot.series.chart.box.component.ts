@@ -25,8 +25,8 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
         [class.active]="isActive"
         [class.hidden]="hideBar"
         [attr.d]="boxPath"
-        [attr.stroke]="strokeColor"
-        [attr.stroke-width]="boxStrokeWidth"
+        [attr.stroke]="boxColor"
+        [attr.stroke-width]="0"
         [attr.aria-label]="ariaLabel"
         [attr.fill]="fill"
         (click)="select.emit(data)"
@@ -52,7 +52,6 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
 export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   @Input() boxColor: string;
   @Input() medianLineColor: string = '#000000';
-  @Input() strokeWidth: number;
   @Input() fill: string;
   @Input() data: IBoxModel;
   @Input() width: number;
@@ -60,13 +59,15 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   @Input() x: number;
   @Input() y: number;
   @Input() lineCoordinates: LineCoordinates;
-  @Input() roundEdges: boolean = true;
+  @Input() boxHasRoundedEdges: boolean = true;
   @Input() offset: number = 0;
   @Input() isActive: boolean = false;
   @Input() ariaLabel: string;
   @Input() noBarWhenZero: boolean = true;
   @Input() whiskerStrokeWidth: number = 10;
   @Input() medianLineWidth: number = 10;
+  @Input() boxWidth: number;
+
   @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
   @Output() activate: EventEmitter<IBoxModel> = new EventEmitter();
   @Output() deactivate: EventEmitter<IBoxModel> = new EventEmitter();
@@ -97,7 +98,6 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
 
   // Updates the Chart
   update(): void {
-    this.boxStrokeWidth = Math.max(this.strokeWidth, 1);
     this.updateLineElement();
     this.updatePathElement();
     this.hideBar = this.noBarWhenZero && this.height === 0;
@@ -111,7 +111,7 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   // Loads the animation on change
   loadAnimation(): void {
     this.boxPath = this.oldPath = this.getStartingPath();
-    this.oldLineCoordinates = this.getStartingLineCoordinates();
+    this.oldLineCoordinates = [...this.lineCoordinates];
     setTimeout(this.update.bind(this), 100);
   }
 
@@ -136,44 +136,6 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
     this.oldLineCoordinates = [...lineCoordinates];
   }
 
-  /**
-   * See [D3 Selections](https://www.d3indepth.com/selections/)
-   * @param d The joined data.
-   * @param index The index of the element within the selection
-   * @param node The node element (Line).
-   */
-  lineTween(attr: string, d: any, index: number, node: BaseType[] | ArrayLike<BaseType>) {
-    const nodeLineEl = node[index] as SVGLineElement;
-    return nodeLineEl[attr].baseVal.value;
-  }
-
-  // Returns the Path Tween function when updating elements
-  pathTween(d1: string, precision: number) {
-    return function () {
-      const path0 = this;
-      const path1 = this.cloneNode();
-      path1.setAttribute('d', d1);
-      const n0 = path0?.getTotalLength();
-      const n1 = path1?.getTotalLength();
-      const distances = [0];
-      let i = 0;
-      const dt = precision / Math.max(n0, n1);
-      while (i < 1) {
-        distances.push(i);
-        i += dt;
-      }
-      distances.push(1);
-      const points = distances.map((t: number) => {
-        const p0 = path0.getPointAtLength(t * n0);
-        const p1 = path1.getPointAtLength(t * n1);
-        return interpolate([p0.x, p0.y], [p1.x, p1.y]);
-      });
-      return (t: any) => {
-        return t < 1 ? 'M' + points.map((p: (t: number) => any[]) => p(t)).join('L') : d1;
-      };
-    };
-  }
-
   // Gets the starting path the animation
   getStartingPath(): string {
     return this.getPath();
@@ -181,53 +143,17 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
 
   // Returns the rectangle path
   getPath(): string {
-    const radius = this.getRadius();
-    let path = '';
-    path = this.getRoundedRectanglePath(this.x, this.y, this.width, this.height, Math.min(this.height, radius), this.edges);
-    return path;
-  }
-
-  getStartingLineCoordinates(): LineCoordinates {
-    return [...this.lineCoordinates];
-  }
-
-  getRadius(): number {
     let radius = 0;
-    if (this.roundEdges && this.height > 5 && this.width > 5) {
+    if (this.boxHasRoundedEdges && this.height > 5 && this.width > 5) {
       radius = Math.floor(Math.min(5, this.height / 2, this.width / 2));
     }
-    return radius;
-  }
-
-  getGradient(): Gradient[] {
-    return [
-      {
-        offset: 0,
-        color: this.fill,
-        opacity: this.getStartOpacity()
-      },
-      {
-        offset: 100,
-        color: this.fill,
-        opacity: 1
-      }
-    ];
-  }
-
-  getStartOpacity(): number {
-    if (this.roundEdges) {
-      return 0.2;
-    } else {
-      return 0.5;
-    }
-  }
-
-  get edges(): boolean[] {
     let edges: [boolean, boolean, boolean, boolean] = [false, false, false, false];
-    if (this.roundEdges) {
+    if (this.boxHasRoundedEdges) {
       edges = [true, true, true, true];
     }
-    return edges;
+    let path = '';
+    path = this.getRoundedRectanglePath(this.x, this.y, this.width, this.height, Math.min(this.height, radius), edges);
+    return path;
   }
 
   @HostListener('mouseenter')

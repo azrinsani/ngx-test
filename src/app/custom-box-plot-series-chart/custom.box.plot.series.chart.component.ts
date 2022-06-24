@@ -41,7 +41,7 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   @Input() roundDomains: boolean = false;
   @Input() xAxisLabel: string;
   @Input() yAxisLabel: string;
-  @Input() roundEdges: boolean = true;
+  @Input() boxHasRoundedEdges: boolean = true;
   @Input() boxColor: string = '#888888';
   @Input() tooltipDisabled: boolean = false;
   @Input() whiskerStrokeWidth: number = 5;
@@ -72,6 +72,7 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
     return item.name;
   }
 
+  // Performs a full redraw/update of the chart
   update(): void {
     super.update();
     this.dims = calculateViewDimensions({

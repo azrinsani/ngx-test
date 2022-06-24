@@ -1,11 +1,12 @@
 <div>
   <ga-box-plot-series-chart
-    [view]="[500, 500]"
+    [view]="[1000, 500]"
     [results]="boxData"
     [scheme]="colorScheme"
     [schemeType]="schemeType"
     [customColors]="customColors"
     [boxColor]="'#888888'"
+    [boxHasRoundedEdges]="true"
     [xAxis]="true"
     [yAxis]="true"
     [legend]="false"
@@ -17,7 +18,6 @@
     [yAxisLabel]="'GDP Per Capita'"
     [showGridLines]="true"
     [roundDomains]="false"
-    [roundEdges]="false"
     [animations]="true"
     [whiskerStrokeWidth]="5"
     [whiskerNotchLineWidth]="10"

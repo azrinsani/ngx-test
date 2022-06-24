@@ -25,10 +25,10 @@ import { BoxChartSeries, DataItem, IBoxModel, IVector2D, ScaleType } from 'src/s
       [height]="box.height"
       [x]="box.x"
       [y]="box.y"
-      [roundEdges]="box.roundEdges"
+      [boxHasRoundedEdges]="boxHasRoundedEdges"
       [fill]="boxColor"
       [boxColor]="boxColor"
-      [strokeWidth]="strokeWidth"
+      [boxWidth]="boxWidth"
       [data]="box"
       [lineCoordinates]="box.lineCoordinates"
       [ariaLabel]="box.ariaLabel"
@@ -71,7 +71,7 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   @Input() tooltipTemplate: TemplateRef<any>;
   @Input() tooltipPlacement: PlacementTypes;
   @Input() tooltipType: StyleTypes;
-  @Input() roundEdges: boolean;
+  @Input() boxHasRoundedEdges: boolean;
   @Input() gradient: boolean = false;
   @Input() whiskerStrokeWidth: number;
   @Input() whiskerNotchLineWidth: number = 10;
@@ -89,14 +89,6 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   tooltipTitle: string;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.update();
-  }
-
-  onClick(data: IBoxModel): void {
-    this.select.emit(data);
-  }
-
-  update(): void {
     this.updateTooltipSettings();
     const width = this.series && this.series.series.length ? Math.round(this.xScale.bandwidth()) : null;
     const seriesName = this.series.name;
@@ -104,9 +96,8 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
     const mappedCounts = this.counts.map(seriesItem => Number(seriesItem.value));
     this.whiskers = [min(mappedCounts), max(mappedCounts)];
     const groupCounts = this.counts.map(item => item.value).sort((a, b) => Number(a) - Number(b));
-    this.quartiles = this.getBoxQuantiles(groupCounts);
+    this.quartiles = [quantile(groupCounts, 0.25), quantile(groupCounts, 0.5), quantile(groupCounts, 0.75)];
     this.lineCoordinates = this.getLinesCoordinates(seriesName.toString(), this.whiskers, this.quartiles, width);
-
     const value = this.quartiles[1];
     const formattedLabel = formatLabel(seriesName);
     const box: IBoxModel = {
@@ -118,7 +109,6 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
       height: 0,
       x: 0,
       y: 0,
-      roundEdges: this.roundEdges,
       quartiles: this.quartiles,
       lineCoordinates: this.lineCoordinates
     };
@@ -143,10 +133,11 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
     this.box = box;
   }
 
-  getBoxQuantiles(inputData: Array<number | Date>): [number, number, number] {
-    return [quantile(inputData, 0.25), quantile(inputData, 0.5), quantile(inputData, 0.75)];
+  onClick(data: IBoxModel): void {
+    this.select.emit(data);
   }
 
+  // Generate the 4 whisker lines
   getLinesCoordinates(seriesName: string, whiskers: [number, number], quartiles: [number, number, number], barWidth: number): [IVector2D, IVector2D, IVector2D, IVector2D] {
     const commonX = this.xScale(seriesName);
     const offsetX = commonX + barWidth / 2;
