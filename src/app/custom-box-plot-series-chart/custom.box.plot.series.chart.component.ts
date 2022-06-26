@@ -3,7 +3,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import { BaseChartComponent, calculateViewDimensions, ColorHelper, ViewDimensions } from '@swimlane/ngx-charts';
 import { BoxPlotSeriesType, IBoxModelType, LegendOptionType, LegendPosition, ScaleType } from '../../shared/types/custom.chart.type';
-import { scaleBand, ScaleBand } from 'd3';
+import { scaleBand, ScaleBand, scaleLog, ScaleLogarithmic } from 'd3';
 
 @Component({
   selector: 'ga-box-plot-series-chart',
@@ -59,7 +59,7 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   margin: [number, number, number, number] = [10, 20, 10, 20];
   legendOptions: LegendOptionType;
   xScale: ScaleBand<string>;
-  yScale: ScaleLinear<number, number>;
+  yScale: ScaleLogarithmic<number, number>;
   xDomain: Array<string | number | Date>;
   yDomain: number[];
   seriesDomain: string[];
@@ -85,6 +85,7 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
     });
     this.xDomain = this.getXDomain();
     this.yDomain = this.getYDomain();
+    console.log(this.yDomain);
     this.seriesDomain = this.results.map(d => `${d.name}`);
     this.scheme = 'vivid';
     this.xScale = this.getXScale(this.xDomain, this.dims.width);
@@ -114,8 +115,8 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   }
 
   // Gets the Scale for y-axis
-  getYScale(domain: number[], height: number): ScaleLinear<number, number> {
-    const scale: ScaleLinear<number, number> = scaleLinear().domain(domain).range([height, 0]);
+  getYScale(domain: number[], height: number): ScaleLogarithmic<number, number> {
+    const scale: ScaleLogarithmic<number, number> = scaleLog().domain(domain).range([height, 0]);
     return this.roundDomains ? scale.nice() : scale;
   }
 
