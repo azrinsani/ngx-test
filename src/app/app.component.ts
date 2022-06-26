@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { tonnageChartData, gradeChartData, polarChartDataMock } from "./app.data";
+import { tonnageChartData, gradeChartData, polarChartDataMock, boxPlotDataJsonStr } from "./app.data";
 import { LegendPosition } from './custom-grouped-vertical-bar-chart/custom.grouped.vertical.bar.type';
 import { DataItem, MultiSeries, Series } from "@swimlane/ngx-charts/lib/models/chart-data.model";
 import { DepositSummaryGeochemistryFeaturePropertiesType, DepositSummaryWfsType } from "./geochemistry/deposit.summary.report.type";
@@ -32,7 +32,10 @@ export class AppComponent {
 
   constructor() {
     const getFeatureResult: DepositSummaryWfsType = JSON.parse(mockDepositGeochemistryJson);
-    this.boxData = boxData;
+
+    this.boxData = JSON.parse(boxPlotDataJsonStr);
+    console.log(mockBoxData)
+    console.log(this.boxData);
     // this.polarChartData = this.transformToPolarChartData(getFeatureResult);
   }
 
@@ -100,7 +103,7 @@ export class AppComponent {
   }
 }
 
-export const boxData: BoxPlotSeriesType[] = [
+export const mockBoxData: BoxPlotSeriesType[] = [
   {
     name: 'Colombia',
     series: [

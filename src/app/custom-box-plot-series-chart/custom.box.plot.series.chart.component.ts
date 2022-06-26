@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, ContentChild, EventEmitter, HostListener, Input, Output, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, Output, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
-import { BaseChartComponent, calculateViewDimensions, ColorHelper, getDomain, getScale, id, ViewDimensions } from '@swimlane/ngx-charts';
-import { BoxPlotSeriesType, IBoxModelType, LegendOptionType, LegendPosition, ScaleType } from 'src/shared/types/custom.chart.type';
+import { BaseChartComponent, calculateViewDimensions, ColorHelper, ViewDimensions } from '@swimlane/ngx-charts';
+import { BoxPlotSeriesType, IBoxModelType, LegendOptionType, LegendPosition, ScaleType } from '../../shared/types/custom.chart.type';
 import { scaleBand, ScaleBand } from 'd3';
 
-// Modified scatter plot which also displays box and whiskers for given quartiles, median and outlier range
 @Component({
   selector: 'ga-box-plot-series-chart',
   templateUrl: './custom.box.plot.series.chart.component.html',
@@ -48,9 +47,9 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   @Input() whiskerNotchLineWidth: number = 10;
   @Input() medianLineWidth: number = 5;
 
-  @Output() select: EventEmitter<IBoxModelType> = new EventEmitter();
-  @Output() activate: EventEmitter<IBoxModelType> = new EventEmitter();
-  @Output() deactivate: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() selectItem: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() activateItem: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() deactivateItem: EventEmitter<IBoxModelType> = new EventEmitter();
   @ContentChild('tooltipTemplate', { static: false }) tooltipTemplate: TemplateRef<any>;
 
   results: BoxPlotSeriesType[];
@@ -121,7 +120,7 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   }
 
   // Gets the Unique Box Chart Values
-  getUniqueBoxChartXDomainValues(results: BoxPlotSeriesType[]) {
+  getUniqueBoxChartXDomainValues(results: BoxPlotSeriesType[]): Array<string | number | Date> {
     const valueSet: Set<string | number | Date> = new Set<string | number | Date>();
     for (const result of results) {
       valueSet.add(result.name);
@@ -138,12 +137,12 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
     if (typeof values[0] === 'string') {
       domain = values.map(val => val.toString());
     } else if (typeof values[0] === 'number') {
-      const mappedValues = values.map(v => Number(v));
+      const mappedValues: number[] = values.map(v => Number(v));
       min = Math.min(...mappedValues);
       max = Math.max(...mappedValues);
       domain = [min, max];
     } else {
-      const mappedValues = values.map(v => Number(new Date(v)));
+      const mappedValues: number[] = values.map(v => Number(new Date(v)));
       min = Math.min(...mappedValues);
       max = Math.max(...mappedValues);
       domain = [new Date(min), new Date(max)];
@@ -169,30 +168,30 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   }
 
   // Updates Y-Axis width and refreshes the chart
-  updateYAxisWidth({ width }): void {
-    this.yAxisWidth = width;
+  updateYAxisWidth(event: any): void {
+    this.yAxisWidth = event.width;
     this.update();
   }
 
   // Updates X-Axis height and refreshes the chart
-  updateXAxisHeight({ height }): void {
-    this.xAxisHeight = height;
+  updateXAxisHeight(event: any): void {
+    this.xAxisHeight = event.height;
     this.update();
   }
 
   // When user clicks on the series
   onClick(data: IBoxModelType): void {
-    this.select.emit(data);
+    this.selectItem.emit(data);
   }
 
   // When user activates the series
   onActivate(data: IBoxModelType): void {
-    this.activate.emit(data);
+    this.activateItem.emit(data);
   }
 
   // When user de-activates the series
   onDeactivate(data: IBoxModelType): void {
-    this.deactivate.emit(data);
+    this.deactivateItem.emit(data);
   }
 
   // Updates the legend

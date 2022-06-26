@@ -1,18 +1,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  TemplateRef
-} from '@angular/core';
-import { ColorHelper, formatLabel, PlacementTypes, StyleTypes, ViewDimensions } from '@swimlane/ngx-charts';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, TemplateRef } from '@angular/core';
+import { formatLabel, PlacementTypes, StyleTypes, ViewDimensions } from '@swimlane/ngx-charts';
 import { min, max, quantile } from 'd3-array';
 import { ScaleLinear, ScaleBand } from 'd3-scale';
-import { BoxPlotSeriesType, DataItemType, IBoxModelType, IVector2dType, ScaleType } from 'src/shared/types/custom.chart.type';
+import { BoxPlotSeriesType, DataItemType, IBoxModelType, IVector2dType, ScaleType } from '../../shared/types/custom.chart.type';
 
 @Component({
   selector: 'g[ga-box-plot-series-chart-box-series]',
@@ -32,9 +23,9 @@ import { BoxPlotSeriesType, DataItemType, IBoxModelType, IVector2dType, ScaleTyp
       [data]="box"
       [lineCoordinates]="box.lineCoordinates"
       [ariaLabel]="box.ariaLabel"
-      (select)="onClick($event)"
-      (activate)="activate.emit($event)"
-      (deactivate)="deactivate.emit($event)"
+      (selectItem)="onClick($event)"
+      (activateItem)="activateItem.emit($event)"
+      (deactivateItem)="deactivateItem.emit($event)"
       ngx-tooltip
       [tooltipDisabled]="tooltipDisabled"
       [tooltipPlacement]="tooltipPlacement"
@@ -76,9 +67,9 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   @Input() whiskerNotchLineWidth: number = 10;
   @Input() medianLineWidth: number;
 
-  @Output() select: EventEmitter<IBoxModelType> = new EventEmitter();
-  @Output() activate: EventEmitter<IBoxModelType> = new EventEmitter();
-  @Output() deactivate: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() selectItem: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() activateItem: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() deactivateItem: EventEmitter<IBoxModelType> = new EventEmitter();
 
   box: IBoxModelType;
   counts: DataItemType[];
@@ -128,7 +119,7 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
 
   // When series is clicked on
   onClick(data: IBoxModelType): void {
-    this.select.emit(data);
+    this.selectItem.emit(data);
   }
 
   // Generate the 4 whisker lines
@@ -177,7 +168,7 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
     return label.toLocaleString().replace(/[&'`"<>]/g, match => {
       return {
         '&': '&amp;',
-        "'": '&#x27;',
+        '\'': '&#x27;',
         '`': '&#x60;',
         '"': '&quot;',
         '<': '&lt;',

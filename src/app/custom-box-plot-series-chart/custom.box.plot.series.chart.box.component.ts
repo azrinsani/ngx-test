@@ -1,9 +1,6 @@
 import { Component, Input, Output, EventEmitter, HostListener, ElementRef, SimpleChanges, OnChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { select, BaseType } from 'd3-selection';
-import { interpolate } from 'd3-interpolate';
-import { easeSinInOut } from 'd3-ease';
-import cloneDeep from 'clone-deep';
-import { BarOrientation, IBoxModelType, IVector2dType, LineCoordinatesType } from 'src/shared/types/custom.chart.type';
+import { select } from 'd3-selection';
+import { IBoxModelType, LineCoordinatesType } from '../../shared/types/custom.chart.type';
 
 @Component({
   selector: 'g[ga-box-plot-series-chart-box]',
@@ -29,7 +26,7 @@ import { BarOrientation, IBoxModelType, IVector2dType, LineCoordinatesType } fro
         [attr.stroke-width]="0"
         [attr.aria-label]="ariaLabel"
         [attr.fill]="fill"
-        (click)="select.emit(data)"
+        (click)="selectItem.emit(data)"
       />
       <!-- The Box Line - There are 4 lines, 0: Vertical Line , 1: Bottom Notch Line, 2: Median Line, 4: Top Notch Line -->
       <svg:line
@@ -68,9 +65,9 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   @Input() medianLineWidth: number = 10;
   @Input() boxWidth: number;
 
-  @Output() select: EventEmitter<IBoxModelType> = new EventEmitter();
-  @Output() activate: EventEmitter<IBoxModelType> = new EventEmitter();
-  @Output() deactivate: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() selectItem: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() activateItem: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() deactivateItem: EventEmitter<IBoxModelType> = new EventEmitter();
 
   nativeElm: any;
   oldPath: string;
@@ -150,12 +147,12 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
 
   @HostListener('mouseenter')
   onMouseEnter(): void {
-    this.activate.emit(this.data);
+    this.activateItem.emit(this.data);
   }
 
   @HostListener('mouseleave')
   onMouseLeave(): void {
-    this.deactivate.emit(this.data);
+    this.deactivateItem.emit(this.data);
   }
 
   // Generates a short id. A 4-character alphanumeric sequence (364 = 1.6 million)
@@ -170,7 +167,7 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   }
 
   // Obtains the rounded Rectangle Path
-  private getRoundedRectanglePath (x: number, y: number, w: number, h: number, r: number, [tl, tr, bl, br]: boolean[]): string {
+  private getRoundedRectanglePath(x: number, y: number, w: number, h: number, r: number, [tl, tr, bl, br]: boolean[]): string {
     let returnValue: string = '';
     w = Math.floor(w);
     h = Math.floor(h);
