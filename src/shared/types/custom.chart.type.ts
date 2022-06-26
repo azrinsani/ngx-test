@@ -1,28 +1,12 @@
-import { ColorHelper } from "@swimlane/ngx-charts";
-
-export interface LegendOptions {
-  colors: any;
-  domain: any[];
-  position: LegendPosition;
-  title: string;
-  scaleType: ScaleType;
-}
+import { ColorHelper } from '@swimlane/ngx-charts';
 
 export enum LegendPosition {
   Right = 'right',
   Below = 'below'
 }
 
-export enum CustomChartType {
-  ScaleLegend = 'scaleLegend',
-  Legend = 'legend'
-}
-export function isDate(value: any): boolean {
+export function isDate(value: any): value is Date {
   return toString.call(value) === '[object Date]';
-}
-
-export function isNumber(value: any): boolean {
-  return typeof value === 'number';
 }
 
 export enum ScaleType {
@@ -54,11 +38,6 @@ export function getScaleType(values: any[], checkDateType: boolean = true): Scal
   return ScaleType.Ordinal;
 }
 
-export enum BarOrientation {
-  Vertical = 'vertical',
-  Horizontal = 'horizontal'
-}
-
 export interface CustomChartEmitType {
   value: number;
   entries: any[];
@@ -72,10 +51,8 @@ export interface LegendOptionType {
   position: LegendPosition;
 }
 
-export type StringOrNumberOrDate = string | number | Date;
-
-export interface DataItem {
-  name: StringOrNumberOrDate;
+export interface DataItemType {
+  name: string | number | Date;
   value: number;
   extra?: any;
   min?: number;
@@ -83,44 +60,40 @@ export interface DataItem {
   label?: string;
 }
 
-export interface IVector2D {
-  v1: IPoint;
-  v2: IPoint;
+export interface IVector2dType {
+  v1: IPointType;
+  v2: IPointType;
 }
 
-export interface IPoint {
+export interface IPointType {
   x: number;
   y: number;
 }
 
-export interface BoxChartSeries {
-  name: StringOrNumberOrDate;
-  series: DataItem[];
+export interface BoxPlotSeriesType {
+  name: string | number | Date;
+  series: DataItemType[];
 }
 
-export interface BoxChartMultiSeries extends Array<BoxChartSeries> {}
-
-export interface IBoxModel {
+export interface IBoxModelType {
   value: number | Date;
-  label: StringOrNumberOrDate;
-  data: DataItem[];
+  label: string | number | Date;
+  data: DataItemType[];
   formattedLabel: string;
   height: number;
   width: number;
   x: number;
   y: number;
-  lineCoordinates: [IVector2D, IVector2D, IVector2D, IVector2D];
+  lineCoordinates: [IVector2dType, IVector2dType, IVector2dType, IVector2dType];
   quartiles: number[];
   tooltipText?: string;
   ariaLabel?: string;
   color?: string;
 }
 
-export interface Gradient {
-  offset: number;
-  originalOffset?: number;
-  color: string;
-  opacity: number;
-}
+export type LineCoordinatesType = [IVector2dType, IVector2dType, IVector2dType, IVector2dType];
 
-export type LineCoordinates = [IVector2D, IVector2D, IVector2D, IVector2D];
+export enum BarOrientation {
+  Vertical = 'vertical',
+  Horizontal = 'horizontal'
+}

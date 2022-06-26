@@ -4,6 +4,7 @@
 
   .circle,
   .bar,
+  .median-line,
   .arc {
     cursor: pointer;
   }
@@ -14,7 +15,7 @@
   .card {
     &.active,
     &:hover {
-      opacity: 0.8;
+      opacity: 1;
       transition: opacity 100ms ease-in-out;
     }
 
@@ -32,32 +33,11 @@
     }
   }
 
-  .line-series,
-  .line-series-range,
-  .polar-series-path,
-  .polar-series-area,
-  .area-series {
-    &.inactive {
-      transition: opacity 100ms ease-in-out;
-      opacity: .2
-    }
-  }
-
   .line-highlight {
     display: none;
 
     &.active {
       display: block;
-    }
-  }
-
-  .area {
-    opacity: 0.6;
-  }
-
-  .circle {
-    &:hover {
-      cursor: pointer;
     }
   }
 
@@ -76,42 +56,6 @@
     fill: none;
   }
 
-  .refline-path {
-    stroke: #a8b2c7;
-    stroke-width: 1;
-    stroke-dasharray: 5;
-    stroke-dashoffset: 5;
-  }
-
-  .refline-label {
-    font-size: 9px;
-  }
-
-  .reference-area {
-    fill-opacity: 0.05;
-    fill: #000;
-  }
-
-  .gridline-path-dotted {
-    stroke: #ddd;
-    stroke-width: 1;
-    fill: none;
-    stroke-dasharray: 1, 20;
-    stroke-dashoffset: 3;
-  }
-
-  .grid-panel {
-    rect {
-      fill: none;
-    }
-
-    &.odd {
-      rect {
-        fill: rgba(0,0,0,0.05);
-      }
-    }
-  }
-
   .ngx-charts {
     text {
       fill: black;
@@ -125,5 +69,4 @@
       stroke: var(--font-color) !important;
     }
   }
-
 }

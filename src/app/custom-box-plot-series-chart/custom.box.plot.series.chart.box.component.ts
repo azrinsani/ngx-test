@@ -3,7 +3,7 @@ import { select, BaseType } from 'd3-selection';
 import { interpolate } from 'd3-interpolate';
 import { easeSinInOut } from 'd3-ease';
 import cloneDeep from 'clone-deep';
-import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 'src/shared/types/custom.chart.type';
+import { BarOrientation, IBoxModelType, IVector2dType, LineCoordinatesType } from 'src/shared/types/custom.chart.type';
 
 @Component({
   selector: 'g[ga-box-plot-series-chart-box]',
@@ -31,10 +31,10 @@ import { BarOrientation, Gradient, IBoxModel, IVector2D, LineCoordinates } from 
         [attr.fill]="fill"
         (click)="select.emit(data)"
       />
-      <!-- The Box Line - There are 4 lines, 0: Vertical Line , 1: Bottom Bottom Notch Line, 2: Median Line, 4: Top Notch Line -->
+      <!-- The Box Line - There are 4 lines, 0: Vertical Line , 1: Bottom Notch Line, 2: Median Line, 4: Top Notch Line -->
       <svg:line
         *ngFor="let line of lineCoordinates; let i = index"
-        class="bar-line"
+        [ngClass]="{'bar-line': true, 'median-line': i === 2}"
         [class.hidden]="hideBar"
         [attr.x1]="line.v1.x"
         [attr.y1]="line.v1.y"
@@ -53,12 +53,12 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   @Input() boxColor: string;
   @Input() medianLineColor: string = '#000000';
   @Input() fill: string;
-  @Input() data: IBoxModel;
+  @Input() data: IBoxModelType;
   @Input() width: number;
   @Input() height: number;
   @Input() x: number;
   @Input() y: number;
-  @Input() lineCoordinates: LineCoordinates;
+  @Input() lineCoordinates: LineCoordinatesType;
   @Input() boxHasRoundedEdges: boolean = true;
   @Input() offset: number = 0;
   @Input() isActive: boolean = false;
@@ -68,15 +68,14 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
   @Input() medianLineWidth: number = 10;
   @Input() boxWidth: number;
 
-  @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
-  @Output() activate: EventEmitter<IBoxModel> = new EventEmitter();
-  @Output() deactivate: EventEmitter<IBoxModel> = new EventEmitter();
+  @Output() select: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() activate: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() deactivate: EventEmitter<IBoxModelType> = new EventEmitter();
 
-  BarOrientation = BarOrientation;
   nativeElm: any;
   oldPath: string;
   boxPath: string;
-  oldLineCoordinates: LineCoordinates;
+  oldLineCoordinates: LineCoordinatesType;
   initialized: boolean = false;
   hideBar: boolean = false;
   maskLine: string;
@@ -110,25 +109,23 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
 
   // Loads the animation on change
   loadAnimation(): void {
-    this.boxPath = this.oldPath = this.getStartingPath();
+    this.boxPath = this.oldPath = this.getPath();
     this.oldLineCoordinates = [...this.lineCoordinates];
     setTimeout(this.update.bind(this), 100);
   }
 
   // Updates the Path Element during a chart update
   updatePathElement(): void {
-    const nodeBar = select(this.nativeElm).selectAll('.bar');
-    const path = this.getPath();
-    nodeBar.attr('d', path);
+    const path: string = this.getPath();
+    select(this.nativeElm).selectAll('.bar').attr('d', path);
     this.oldPath = path;
   }
 
   // Updates the Line Element during a chart update
   updateLineElement(): void {
-    const lineEl = select(this.nativeElm).selectAll('.bar-line');
-    const lineCoordinates = this.lineCoordinates;
-    const oldLineCoordinates = this.oldLineCoordinates;
-    lineEl
+    const lineCoordinates: LineCoordinatesType = this.lineCoordinates;
+    const oldLineCoordinates: LineCoordinatesType = this.oldLineCoordinates;
+    select(this.nativeElm).selectAll('.bar-line')
       .attr('x1', (_, index) => lineCoordinates[index].v1.x)
       .attr('y1', (_, index) => lineCoordinates[index].v1.y)
       .attr('x2', (_, index) => lineCoordinates[index].v2.x)
@@ -136,14 +133,9 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
     this.oldLineCoordinates = [...lineCoordinates];
   }
 
-  // Gets the starting path the animation
-  getStartingPath(): string {
-    return this.getPath();
-  }
-
   // Returns the rectangle path
   getPath(): string {
-    let radius = 0;
+    let radius: number = 0;
     if (this.boxHasRoundedEdges && this.height > 5 && this.width > 5) {
       radius = Math.floor(Math.min(5, this.height / 2, this.width / 2));
     }
@@ -151,7 +143,7 @@ export class CustomBoxPlotSeriesChartBoxComponent implements OnChanges {
     if (this.boxHasRoundedEdges) {
       edges = [true, true, true, true];
     }
-    let path = '';
+    let path: string = '';
     path = this.getRoundedRectanglePath(this.x, this.y, this.width, this.height, Math.min(this.height, radius), edges);
     return path;
   }

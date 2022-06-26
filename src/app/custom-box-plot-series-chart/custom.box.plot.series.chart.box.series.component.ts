@@ -12,7 +12,7 @@ import {
 import { ColorHelper, formatLabel, PlacementTypes, StyleTypes, ViewDimensions } from '@swimlane/ngx-charts';
 import { min, max, quantile } from 'd3-array';
 import { ScaleLinear, ScaleBand } from 'd3-scale';
-import { BoxChartSeries, DataItem, IBoxModel, IVector2D, ScaleType } from 'src/shared/types/custom.chart.type';
+import { BoxPlotSeriesType, DataItemType, IBoxModelType, IVector2dType, ScaleType } from 'src/shared/types/custom.chart.type';
 
 @Component({
   selector: 'g[ga-box-plot-series-chart-box-series]',
@@ -60,10 +60,9 @@ import { BoxChartSeries, DataItem, IBoxModel, IVector2D, ScaleType } from 'src/s
 })
 export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   @Input() dims: ViewDimensions;
-  @Input() series: BoxChartSeries;
+  @Input() series: BoxPlotSeriesType;
   @Input() xScale: ScaleBand<string>;
   @Input() yScale: ScaleLinear<number, number>;
-  @Input() colors: ColorHelper;
   @Input() boxColor: string;
   @Input() strokeWidth: number;
   @Input() boxWidth: number;
@@ -77,33 +76,32 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   @Input() whiskerNotchLineWidth: number = 10;
   @Input() medianLineWidth: number;
 
-  @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
-  @Output() activate: EventEmitter<IBoxModel> = new EventEmitter();
-  @Output() deactivate: EventEmitter<IBoxModel> = new EventEmitter();
+  @Output() select: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() activate: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() deactivate: EventEmitter<IBoxModelType> = new EventEmitter();
 
-  box: IBoxModel;
-  counts: DataItem[];
+  box: IBoxModelType;
+  counts: DataItemType[];
   quartiles: [number, number, number];
   whiskers: [number, number];
-  lineCoordinates: [IVector2D, IVector2D, IVector2D, IVector2D];
+  lineCoordinates: [IVector2dType, IVector2dType, IVector2dType, IVector2dType];
   tooltipTitle: string;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateTooltipSettings();
-    const width = this.series && this.series.series.length ? Math.round(this.xScale.bandwidth()) : null;
-    const seriesName = this.series.name;
+    const width: number = this.series && this.series.series.length ? Math.round(this.xScale.bandwidth()) : null;
     this.counts = this.series.series;
-    const mappedCounts = this.counts.map(seriesItem => Number(seriesItem.value));
+    const mappedCounts: number[] = this.counts.map(seriesItem => Number(seriesItem.value));
     this.whiskers = [min(mappedCounts), max(mappedCounts)];
-    const groupCounts = this.counts.map(item => item.value).sort((a, b) => Number(a) - Number(b));
+    const groupCounts: number[] = this.counts.map(item => item.value).sort((a, b) => Number(a) - Number(b));
     this.quartiles = [quantile(groupCounts, 0.25), quantile(groupCounts, 0.5), quantile(groupCounts, 0.75)];
-    this.lineCoordinates = this.getLinesCoordinates(seriesName.toString(), this.whiskers, this.quartiles, width);
-    const value = this.quartiles[1];
-    const formattedLabel = formatLabel(seriesName);
-    const box: IBoxModel = {
+    this.lineCoordinates = this.getLinesCoordinates(this.series.name.toString(), this.whiskers, this.quartiles, width);
+    const value: number = this.quartiles[1];
+    const formattedLabel: string = formatLabel(this.series.name);
+    const box: IBoxModelType = {
       value,
       data: this.counts,
-      label: seriesName,
+      label: this.series.name,
       formattedLabel,
       width,
       height: 0,
@@ -113,16 +111,11 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
       lineCoordinates: this.lineCoordinates
     };
     box.height = Math.abs(this.yScale(this.quartiles[0]) - this.yScale(this.quartiles[2]));
-    box.x = this.xScale(seriesName.toString());
+    box.x = this.xScale(this.series.name.toString());
     box.y = this.yScale(this.quartiles[2]);
     box.ariaLabel = formattedLabel + ' - Median: ' + value.toLocaleString();
-    if (this.colors.scaleType === ScaleType.Ordinal) {
-      box.color = this.colors.getColor(seriesName);
-    } else {
-      box.color = this.colors.getColor(this.quartiles[1]);
-    }
-    const tooltipLabel = formattedLabel;
-    const formattedTooltipLabel = `
+    const tooltipLabel: string = formattedLabel;
+    const formattedTooltipLabel: string = `
     <span class="tooltip-label">${this.escapeLabel(tooltipLabel)}</span>
     <span class="tooltip-val">
       • Q1: ${this.quartiles[0]} • Q2: ${this.quartiles[1]} • Q3: ${this.quartiles[2]}<br>
@@ -133,31 +126,31 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
     this.box = box;
   }
 
-  onClick(data: IBoxModel): void {
+  // When series is clicked on
+  onClick(data: IBoxModelType): void {
     this.select.emit(data);
   }
 
   // Generate the 4 whisker lines
-  getLinesCoordinates(seriesName: string, whiskers: [number, number], quartiles: [number, number, number], barWidth: number): [IVector2D, IVector2D, IVector2D, IVector2D] {
-    const commonX = this.xScale(seriesName);
-    const offsetX = commonX + barWidth / 2;
-    const medianLineWidth = Math.max(barWidth + 4 * this.strokeWidth, 1);
-    const whiskerZero = this.yScale(whiskers[0]);
-    const whiskerOne = this.yScale(whiskers[1]);
-    const median = this.yScale(quartiles[1]);
-    const whiskerTopNotchLine: IVector2D = {
+  getLinesCoordinates(seriesName: string, whiskers: [number, number], quartiles: [number, number, number], barWidth: number): [IVector2dType, IVector2dType, IVector2dType, IVector2dType] {
+    const offsetX: number = this.xScale(seriesName) + barWidth / 2;
+    const medianLineWidth: number = Math.max(barWidth + 4 * this.strokeWidth, 1);
+    const whiskerZero: number = this.yScale(whiskers[0]);
+    const whiskerOne: number = this.yScale(whiskers[1]);
+    const median: number = this.yScale(quartiles[1]);
+    const whiskerTopNotchLine: IVector2dType = {
       v1: { x: offsetX + this.whiskerNotchLineWidth / 2, y: whiskerZero },
       v2: { x: offsetX - this.whiskerNotchLineWidth / 2, y: whiskerZero }
     };
-    const medianLine: IVector2D = {
+    const medianLine: IVector2dType = {
       v1: { x: offsetX + medianLineWidth / 2, y: median },
       v2: { x: offsetX - medianLineWidth / 2, y: median }
     };
-    const whiskerBottomNotchLine: IVector2D = {
+    const whiskerBottomNotchLine: IVector2dType = {
       v1: { x: offsetX + this.whiskerNotchLineWidth / 2, y: whiskerOne },
       v2: { x: offsetX - this.whiskerNotchLineWidth / 2, y: whiskerOne }
     };
-    const whiskerVerticalLine: IVector2D = {
+    const whiskerVerticalLine: IVector2dType = {
       v1: { x: offsetX, y: whiskerZero },
       v2: { x: offsetX, y: whiskerOne }
     };
@@ -165,7 +158,7 @@ export class CustomBoxPlotSeriesChartBoxSeriesComponent implements OnChanges {
   }
 
   // Updates the tooltip settings during any changes
-  updateTooltipSettings() {
+  updateTooltipSettings(): void {
     if (this.tooltipDisabled) {
       this.tooltipPlacement = undefined;
       this.tooltipType = undefined;

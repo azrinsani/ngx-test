@@ -5,7 +5,7 @@ import { DataItem, MultiSeries, Series } from "@swimlane/ngx-charts/lib/models/c
 import { DepositSummaryGeochemistryFeaturePropertiesType, DepositSummaryWfsType } from "./geochemistry/deposit.summary.report.type";
 import { property } from "lodash-es";
 import { mockDepositGeochemistryJson } from "./geochemistry/deposit.geochemistry.mock";
-import { BoxChartMultiSeries, ScaleType } from 'src/shared/types/custom.chart.type';
+import { BoxPlotSeriesType, ScaleType } from 'src/shared/types/custom.chart.type';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +28,7 @@ export class AppComponent {
   schemeType = ScaleType.Ordinal;
   colorSets: any;
   colorScheme: any;
-  boxData: BoxChartMultiSeries;
+  boxData: BoxPlotSeriesType[];
 
   constructor() {
     const getFeatureResult: DepositSummaryWfsType = JSON.parse(mockDepositGeochemistryJson);
@@ -100,7 +100,7 @@ export class AppComponent {
   }
 }
 
-export const boxData: BoxChartMultiSeries = [
+export const boxData: BoxPlotSeriesType[] = [
   {
     name: 'Colombia',
     series: [

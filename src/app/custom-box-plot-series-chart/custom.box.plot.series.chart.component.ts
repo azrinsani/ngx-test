@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component, ContentChild, EventEmitter, HostLis
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import { BaseChartComponent, calculateViewDimensions, ColorHelper, getDomain, getScale, id, ViewDimensions } from '@swimlane/ngx-charts';
-import { BoxChartMultiSeries, BoxChartSeries, IBoxModel, LegendOptions, LegendPosition, ScaleType, StringOrNumberOrDate } from 'src/shared/types/custom.chart.type';
+import { BoxPlotSeriesType, IBoxModelType, LegendOptionType, LegendPosition, ScaleType } from 'src/shared/types/custom.chart.type';
 import { scaleBand, ScaleBand } from 'd3';
 
 // Modified scatter plot which also displays box and whiskers for given quartiles, median and outlier range
 @Component({
   selector: 'ga-box-plot-series-chart',
   templateUrl: './custom.box.plot.series.chart.component.html',
-  styleUrls: ['./custom.chart.component.scss'],
+  styleUrls: ['./custom.box.plot.series.chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   animations: [
@@ -32,7 +32,7 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   @Input() legend: boolean = false;
   @Input() legendPosition: LegendPosition = LegendPosition.Right;
   @Input() legendTitle: string = 'Legend';
-  @Input() legendOptionsConfig: LegendOptions;
+  @Input() legendOptionsConfig: LegendOptionType;
   @Input() showGridLines: boolean = true;
   @Input() xAxis: boolean = true;
   @Input() yAxis: boolean = true;
@@ -48,29 +48,25 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
   @Input() whiskerNotchLineWidth: number = 10;
   @Input() medianLineWidth: number = 5;
 
-  @Output() select: EventEmitter<IBoxModel> = new EventEmitter();
-  @Output() activate: EventEmitter<IBoxModel> = new EventEmitter();
-  @Output() deactivate: EventEmitter<IBoxModel> = new EventEmitter();
+  @Output() select: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() activate: EventEmitter<IBoxModelType> = new EventEmitter();
+  @Output() deactivate: EventEmitter<IBoxModelType> = new EventEmitter();
   @ContentChild('tooltipTemplate', { static: false }) tooltipTemplate: TemplateRef<any>;
 
-  results: BoxChartMultiSeries;
+  results: BoxPlotSeriesType[];
   dims: ViewDimensions;
   colors: ColorHelper;
   transform: string;
   margin: [number, number, number, number] = [10, 20, 10, 20];
-  legendOptions: LegendOptions;
+  legendOptions: LegendOptionType;
   xScale: ScaleBand<string>;
   yScale: ScaleLinear<number, number>;
-  xDomain: StringOrNumberOrDate[];
+  xDomain: Array<string | number | Date>;
   yDomain: number[];
   seriesDomain: string[];
   xAxisHeight: number = 0;
   yAxisWidth: number = 0;
   schemeScaleType: ScaleType = ScaleType.Ordinal;
-
-  trackBy(index: number, item: BoxChartSeries): StringOrNumberOrDate {
-    return item.name;
-  }
 
   // Performs a full redraw/update of the chart
   update(): void {
@@ -90,15 +86,16 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
     });
     this.xDomain = this.getXDomain();
     this.yDomain = this.getYDomain();
-    this.seriesDomain = this.getSeriesDomain();
-    console.log(this.results);
+    this.seriesDomain = this.results.map(d => `${d.name}`);
     this.scheme = 'vivid';
-    this.setScales();
+    this.xScale = this.getXScale(this.xDomain, this.dims.width);
+    this.yScale = this.getYScale(this.yDomain, this.dims.height);
     this.setColors();
     this.legendOptions = this.getLegendOptions();
     this.transform = `translate(${this.dims.xOffset} , ${this.margin[0]})`;
   }
 
+  // Set the chart series colors
   setColors(): void {
     let domain: string[] | number[] = [];
     if (this.schemeType === ScaleType.Ordinal) {
@@ -109,34 +106,30 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
     this.colors = new ColorHelper(this.scheme, this.schemeType, domain, this.customColors);
   }
 
-  setScales() {
-    this.xScale = this.getXScale(this.xDomain, this.dims.width);
-    this.yScale = this.getYScale(this.yDomain, this.dims.height);
-  }
-
+  // Gets the Scale for x-axis
   getXScale(domain: Array<string | number | Date>, width: number): ScaleBand<string> {
-    const scale = scaleBand()
+    return scaleBand()
       .domain(domain.map(d => d.toString()))
       .rangeRound([0, width])
       .padding(0.5);
-
-    return scale;
   }
 
+  // Gets the Scale for y-axis
   getYScale(domain: number[], height: number): ScaleLinear<number, number> {
-    const scale = scaleLinear().domain(domain).range([height, 0]);
-
+    const scale: ScaleLinear<number, number> = scaleLinear().domain(domain).range([height, 0]);
     return this.roundDomains ? scale.nice() : scale;
   }
 
-  getUniqueBoxChartXDomainValues(results: BoxChartMultiSeries) {
-    const valueSet = new Set<string | number | Date>();
+  // Gets the Unique Box Chart Values
+  getUniqueBoxChartXDomainValues(results: BoxPlotSeriesType[]) {
+    const valueSet: Set<string | number | Date> = new Set<string | number | Date>();
     for (const result of results) {
       valueSet.add(result.name);
     }
     return Array.from(valueSet);
   }
 
+  // Obtains the min max range for X data values
   getXDomain(): Array<string | number | Date> {
     let domain: Array<string | number | Date> = [];
     const values: Array<string | number | Date> = this.getUniqueBoxChartXDomainValues(this.results);
@@ -158,6 +151,7 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
     return domain;
   }
 
+  // Obtains the min max range for Y data values
   getYDomain(): number[] {
     const domain: Array<number | Date> = [];
     for (const results of this.results) {
@@ -167,44 +161,43 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
         }
       }
     }
-
-    const values = [...domain];
-    const mappedValues = values.map(v => Number(v));
-
+    const values: Array<number | Date> = [...domain];
+    const mappedValues: number[] = values.map(v => Number(v));
     const min: number = Math.min(...mappedValues);
     const max: number = Math.max(...mappedValues);
-
     return [min, max];
   }
 
-  getSeriesDomain(): string[] {
-    return this.results.map(d => `${d.name}`);
-  }
-
+  // Updates Y-Axis width and refreshes the chart
   updateYAxisWidth({ width }): void {
     this.yAxisWidth = width;
     this.update();
   }
 
+  // Updates X-Axis height and refreshes the chart
   updateXAxisHeight({ height }): void {
     this.xAxisHeight = height;
     this.update();
   }
 
-  onClick(data: IBoxModel): void {
+  // When user clicks on the series
+  onClick(data: IBoxModelType): void {
     this.select.emit(data);
   }
 
-  onActivate(data: IBoxModel): void {
+  // When user activates the series
+  onActivate(data: IBoxModelType): void {
     this.activate.emit(data);
   }
 
-  onDeactivate(data: IBoxModel): void {
+  // When user de-activates the series
+  onDeactivate(data: IBoxModelType): void {
     this.deactivate.emit(data);
   }
 
-  private getLegendOptions(): LegendOptions {
-    const legendOpts: LegendOptions = {
+  // Updates the legend
+  private getLegendOptions(): LegendOptionType {
+    const legendOpts: LegendOptionType = {
       scaleType: this.schemeType as unknown as ScaleType,
       colors: this.colors,
       domain: [],
@@ -219,5 +212,10 @@ export class CustomBoxPlotSeriesChartComponent extends BaseChartComponent {
       legendOpts.colors = this.colors.scale;
     }
     return legendOpts;
+  }
+
+  // For ngFor to improve performance
+  trackBy(index: number, item: BoxPlotSeriesType): string | number | Date {
+    return item.name;
   }
 }
