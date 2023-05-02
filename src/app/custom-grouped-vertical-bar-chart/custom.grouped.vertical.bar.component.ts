@@ -101,12 +101,12 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
       this.dims.height -= this.dataLabelMaxHeight.negative;
     }
     this.formatDates();
-    this.groupDomain = this.getGroupDomain();
-    this.innerDomain = this.getInnerDomain();
+    this.groupDomain = this.getGroupDomain(this.data);
+    this.innerDomain = this.getInnerDomain(this.data);
     this.valueDomain = this.getValueDomain(this.data);
-    this.groupScale = this.getGroupScale();
-    this.innerScale = this.getInnerScale();
-    this.valueScale = this.getYScale();
+    this.groupScale = this.getGroupScale(this.groupDomain);
+    this.innerScale = this.getInnerScale(this.innerDomain);
+    this.valueScale = this.getYScale(this.valueDomain);
     this.setColors();
     this.legendOptions = this.getLegendOptions();
     this.transform = `translate(${this.dims.xOffset} , ${this.margin[0] + this.dataLabelMaxHeight.negative})`;
@@ -123,29 +123,29 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     }
   }
 
-  getGroupScale(): ScaleBand<string> {
-    const spacing = this.groupDomain.length / (this.dims.height / this.groupPadding + 1);
+  getGroupScale(groupDomain: string[]): ScaleBand<string> {
+    const spacing = groupDomain.length / (this.dims.height / this.groupPadding + 1);
     return scaleBand()
       .rangeRound([0, this.dims.width])
       .paddingInner(spacing)
       .paddingOuter(spacing / 2)
-      .domain(this.groupDomain);
+      .domain(groupDomain);
   }
 
-  getInnerScale(): ScaleBand<string> {
+  getInnerScale(innerDomain: string[]): ScaleBand<string> {
     const width = (this.groupScale as ScaleBand<string>).bandwidth();
-    const spacing = this.innerDomain.length / (width / this.barPadding + 1);
-    return scaleBand().rangeRound([0, width]).paddingInner(spacing).domain(this.innerDomain);
+    const spacing = innerDomain.length / (width / this.barPadding + 1);
+    return scaleBand().rangeRound([0, width]).paddingInner(spacing).domain(innerDomain);
   }
 
-  getYScale(): ScaleLinear<number,number> {
-    const scale = scaleLinear().range([this.dims.height, 0]).domain(this.valueDomain);
+  getYScale(valueDomain: [number, number]): ScaleLinear<number,number> {
+    const scale = scaleLinear().range([this.dims.height, 0]).domain(valueDomain);
     return this.roundDomains ? scale.nice() : scale;
   }
 
-  getGroupDomain(): string[] {
+  getGroupDomain(data: MultiSeries): string[] {
     const domain = [];
-    for (const series of this.data) {
+    for (const series of data) {
       if (!domain.includes(series.name)) {
         domain.push(series.name);
       }
@@ -153,9 +153,9 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     return domain;
   }
 
-  getInnerDomain(): string[] {
+  getInnerDomain(data: MultiSeries): string[] {
     const domain = [];
-    for (const series of this.data) {
+    for (const series of data) {
       for (const d of series.series) {
         if (!domain.includes(d.name)) {
           domain.push(d.name);

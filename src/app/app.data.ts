@@ -82,6 +82,87 @@ export const gradeChartData: MultiSeries = [
   }
 ];
 
+export const gradeChartDataLog: MultiSeries = [
+  {
+    name: "Indicated resource",
+    series: [
+
+      {
+        name: "Lead Grade",
+        value: 70
+      }
+    ]
+  },
+  {
+    name: "Inferred resource",
+    series: [
+      {
+        name: "Silver Grade",
+        value: 200000
+      },
+      {
+        name: "Lead Grade",
+        value: 900
+      },
+      {
+        name: "Zinc Grade",
+        value: 3
+      }
+    ]
+  },
+  {
+    name: "Measured resource",
+    series: [
+      {
+        name: "Silver Grade",
+        value: 500000000
+      },
+      {
+        name: "Lead Grade",
+        value: 2.50
+      },
+      {
+        name: "Zinc Grade",
+        value: 40
+      }
+    ]
+  },
+  {
+    name: "Probable (ore) reserve",
+    series: [
+      {
+        name: "Silver Grade",
+        value: 10000
+      },
+      {
+        name: "Lead Grade",
+        value: 20000
+      },
+      {
+        name: "Zinc Grade",
+        value: 30000
+      }
+    ]
+  },
+  {
+    name: "Proved (ore) reserve",
+    series: [
+      {
+        name: "Silver Grade",
+        value: 400
+      },
+      {
+        name: "Lead Grade",
+        value: 5000
+      },
+      {
+        name: "Zinc Grade",
+        value: 50
+      }
+    ]
+  }
+];
+
 export const tonnageChartData : MultiSeries = [
   {
     name: "Indicated resource",
@@ -207,6 +288,139 @@ export const tonnageChartData : MultiSeries = [
       {
         name: "Zinc",
         value: 26,
+        "extra": {
+          "code": "uk"
+        }
+      }
+    ]
+  }
+]
+
+export const tonnageChartDataLog : MultiSeries = [
+  {
+    name: "Indicated resource",
+    series: [
+      {
+        name: "Silver",
+        value: 40,
+        "extra": {
+          "code": "de"
+        }
+      },
+      {
+        name: "Lead",
+        value: 300000006,
+        "extra": {
+          "code": "de"
+        }
+      },
+      {
+        name: "Zinc",
+        value: 31,
+        "extra": {
+          "code": "de"
+        }
+      }
+    ]
+  },
+  {
+    name: "Inferred resource",
+    series: [
+      {
+        name: "Silver",
+        value: 0,
+        "extra": {
+          "code": "us"
+        }
+      },
+      {
+        name: "Lead",
+        value: 4500,
+        "extra": {
+          "code": "us"
+        }
+      },
+      {
+        name: "Zinc",
+        value: 300000000007,
+        "extra": {
+          "code": "us"
+        }
+      }
+    ]
+  },
+  {
+    name: "Measured resource",
+    series: [
+      {
+        name: "Silver",
+        value: 3600,
+        "extra": {
+          "code": "fr"
+        }
+      },
+      {
+        name: "Lead",
+        value: 3400,
+        "extra": {
+          "code": "fr"
+        }
+      },
+      {
+        name: "Zinc",
+        value: 2009,
+        "extra": {
+          "code": "fr"
+        }
+      }
+    ]
+  },
+  {
+    name: "Probable (ore) reserve",
+    series: [
+      {
+        name: "Silver",
+        value: 360000000,
+        "extra": {
+          "code": "uk"
+        }
+      },
+      {
+        name: "Lead",
+        value: 320,
+        "extra": {
+          "code": "uk"
+        }
+      },
+      {
+        name: "Zinc",
+        value: 2600000,
+        "extra": {
+          "code": "uk"
+        }
+      }
+    ]
+  },
+  {
+    name: "Proved (ore) reserve",
+    series: [
+      {
+        name: "Silver",
+        value: 36,
+        "extra": {
+          "code": "uk"
+        }
+      },
+      {
+        name: "Lead",
+        value: 320,
+        "extra": {
+          "code": "uk"
+        }
+      },
+      {
+        name: "Zinc",
+        value: 1,
         "extra": {
           "code": "uk"
         }

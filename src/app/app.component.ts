@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { tonnageChartData, gradeChartData, polarChartDataMock, boxPlotDataJsonStr } from "./app.data";
+import {
+  tonnageChartData,
+  gradeChartData,
+  polarChartDataMock,
+  boxPlotDataJsonStr,
+  tonnageChartDataLog, gradeChartDataLog
+} from "./app.data";
 import { LegendPosition } from './custom-grouped-vertical-bar-chart/custom.grouped.vertical.bar.type';
 import { DataItem, MultiSeries, Series } from "@swimlane/ngx-charts/lib/models/chart-data.model";
 import { DepositSummaryGeochemistryFeaturePropertiesType, DepositSummaryWfsType } from "./geochemistry/deposit.summary.report.type";
@@ -15,7 +21,7 @@ import { BoxPlotSeriesType, ScaleType } from 'src/shared/types/custom.chart.type
 export class AppComponent {
   title = 'ngtest';
   data1: MultiSeries = tonnageChartData;
-  data2: MultiSeries = gradeChartData;
+  data2: MultiSeries = gradeChartDataLog;
   polarChartData: MultiSeries = polarChartDataMock;
   boxPlotData: MultiSeries;
   legendPosition = LegendPosition.Right;
