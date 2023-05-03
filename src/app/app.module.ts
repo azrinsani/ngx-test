@@ -8,6 +8,8 @@ import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform
 import { CustomGroupedVerticalBarModule } from "./custom-grouped-vertical-bar-chart/custom.grouped.vertical.bar.module";
 import { CustomPolarChartModule } from "./custom-polar-chart/custom.polar.chart.module";
 import { CustomBoxPlotSeriesChartModule } from "./custom-box-plot-series-chart/custom.box.plot.series.chart.module";
+import { BsDropdownModule } from "ngx-bootstrap/dropdown";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
 
 @NgModule({
   declarations: [
@@ -15,6 +17,7 @@ import { CustomBoxPlotSeriesChartModule } from "./custom-box-plot-series-chart/c
   ],
   imports: [
     BrowserModule,
+    BsDropdownModule.forRoot(),
     CustomBarVerticalModule,
     CustomGroupedVerticalBarModule,
     CustomBoxPlotSeriesChartModule,
@@ -23,6 +26,7 @@ import { CustomBoxPlotSeriesChartModule } from "./custom-box-plot-series-chart/c
     BrowserAnimationsModule,
     NoopAnimationsModule,
     CommonModule,
+    TooltipModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

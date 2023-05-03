@@ -62,7 +62,7 @@
     "moment": "^2.24.0",
     "ng-multiselect-dropdown": "0.2.10",
     "ng2-charts": "^2.4.2",
-    "ngx-bootstrap": "^5.3.2",
+    "ngx-bootstrap": "^5.6.2",
     "ngx-clipboard": "^15.0.1",
     "ngx-color-picker": "^11.0.0",
     "ngx-device-detector": "^3.0.0",

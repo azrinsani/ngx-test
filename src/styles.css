@@ -1,3 +1,5 @@
+@import '~bootstrap/dist/css/bootstrap.css';
+
 /* You can add global styles to this file, and also import other style files */
 html,
 body {
@@ -5,4 +7,32 @@ body {
   padding: 0;
   height: 100%;
   font-family: sans-serif;
+}
+
+.btn-ga {
+  color: #ffffff;
+  background-color: #0E3747;
+  border-color: #0E3747;
+}
+
+.btn-ga:focus {
+  color: #ffffff;
+  outline: none;
+}
+
+.btn-ga:hover {
+  color: #ffffff;
+  background-color: #006A85;
+  border-color: #006A85;
+}
+
+.btn-dropdown {
+  width: 100%;
+  outline: none;
+}
+
+.dropdown-menu {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 0px;
 }

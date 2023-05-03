@@ -12,6 +12,8 @@ import { DepositSummaryGeochemistryFeaturePropertiesType, DepositSummaryWfsType 
 import { property } from "lodash-es";
 import { mockDepositGeochemistryJson } from "./geochemistry/deposit.geochemistry.mock";
 import { BoxPlotSeriesType, ScaleType } from 'src/shared/types/custom.chart.type';
+import {setTheme} from "ngx-bootstrap/utils";
+import {Select} from "ol/interaction";
 
 @Component({
   selector: 'app-root',
@@ -37,8 +39,10 @@ export class AppComponent {
   boxData: BoxPlotSeriesType[];
 
   constructor() {
+    setTheme('bs3');
+    this.selectedUnitName = this.selectableUnits[0].name;
+    this.yAxisLabel = "Tonnage (" + this.selectedUnitName + ")";
     const getFeatureResult: DepositSummaryWfsType = JSON.parse(mockDepositGeochemistryJson);
-
     this.boxData = JSON.parse(boxPlotDataJsonStr);
     console.log(mockBoxData)
     console.log(this.boxData);

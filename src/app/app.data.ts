@@ -106,7 +106,7 @@ export const gradeChartDataLog: MultiSeries = [
       },
       {
         name: "Zinc Grade",
-        value: 3
+        value: 300
       }
     ]
   },
@@ -119,7 +119,7 @@ export const gradeChartDataLog: MultiSeries = [
       },
       {
         name: "Lead Grade",
-        value: 2.50
+        value: 200.50
       },
       {
         name: "Zinc Grade",
@@ -316,7 +316,7 @@ export const tonnageChartDataLog : MultiSeries = [
       },
       {
         name: "Zinc",
-        value: 31,
+        value: 310,
         "extra": {
           "code": "de"
         }
@@ -420,7 +420,7 @@ export const tonnageChartDataLog : MultiSeries = [
       },
       {
         name: "Zinc",
-        value: 1,
+        value: 1000,
         "extra": {
           "code": "uk"
         }

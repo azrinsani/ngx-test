@@ -139,7 +139,7 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   }
 
   getYScale(valueDomain: [number, number]): ScaleLinear<number,number> {
-    const scale = scaleLinear().range([this.dims.height, 0]).domain(valueDomain);
+    const scale: ScaleLinear<number, number> = (this.useLogYScale ? scaleLog() : scaleLinear()).range([this.dims.height, 0]).domain(valueDomain);
     return this.roundDomains ? scale.nice() : scale;
   }
 
@@ -166,16 +166,22 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   }
 
   getValueDomain(data: MultiSeries): [number, number] {
-    const domain = [];
+    const domain: any[] = [];
     for (const series of data) {
       for (const d of series.series) {
-        if (!domain.includes(d.value)) {
-          domain.push(d.value);
+        if (d.value > 0 && this.useLogYScale) {
+          if (!domain.includes(d.value)) {
+            domain.push(d.value);
+          }
+        } else {
+          if (!domain.includes(d.value)) {
+            domain.push(d.value);
+          }
         }
       }
     }
-    const min = Math.min(0, ...domain);
-    const max = this.yScaleMax ? Math.max(this.yScaleMax, ...domain) : Math.max(0, ...domain);
+    const min: number = this.useLogYScale ? Math.min(...domain) : Math.min(0, ...domain);
+    const max: number = this.yScaleMax ? Math.max(this.yScaleMax, ...domain) : Math.max(this.useLogYScale ? 1 : 0, ...domain);
     return [min, max];
   }
 
