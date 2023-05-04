@@ -4,9 +4,15 @@ import { scaleBand, ScaleLinear, scaleLinear} from 'd3-scale';
 import { calculateViewDimensions, DataItem, ViewDimensions } from '@swimlane/ngx-charts';
 import { ColorHelper } from '@swimlane/ngx-charts';
 import { BaseChartComponent } from '@swimlane/ngx-charts';
-import { BarOrientation, LegendOptions, LegendPosition, ScaleType} from './custom.grouped.vertical.bar.type';
+import {
+  BarOrientation,
+  LegendOptions,
+  LegendPosition,
+  ScaleType,
+  SelectableUnitType, YAxisLabelType
+} from './custom.grouped.vertical.bar.type';
 import { MultiSeries, Series} from '@swimlane/ngx-charts/lib/models/chart-data.model';
-import { ScaleBand } from 'd3';
+import {ScaleBand, scaleLog} from 'd3';
 
 @Component({
   selector: 'ga-ngx-charts-grouped-vertical-bar',
@@ -31,7 +37,7 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   @Input() showXAxisLabel: boolean = true; // This shows a label under the X-axes ticks and tick labels.
   @Input() showYAxisLabel: boolean = true;
   @Input() xAxisLabel: string;
-  @Input() yAxisLabel: string;
+  @Input() yAxisLabel: YAxisLabelType;
   @Input() tooltipDisabled: boolean = false;
   @Input() enableGradientEffectOnBars: boolean = false; // This enables a nice looking gradient on each bar strips
   @Input() showGridLines: boolean = true;
@@ -54,6 +60,10 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   @Input() showLegend: boolean = false; // Shows the legend
   @Input() legendTitle: string;
   @Input() legendPosition: LegendPosition = LegendPosition.Right;
+  @Input() useLogYScale: boolean = false;
+  @Input() unitText: string = "Unit:";
+  @Input() selectableUnits: SelectableUnitType[] = [];
+  @Input() selectedUnitName: string;
   @Output() dataItemHoverEnter: EventEmitter<any> = new EventEmitter(); // Emits value when mouse hovers over a bar or a legend item
   @Output() dataItemHoverLeave: EventEmitter<any> = new EventEmitter(); // Emits value when mouse un-hovers over a bar or a legend item
   @Output() dataItemClick: EventEmitter<any> = new EventEmitter(); // Emits value when a bar or a legend item is clicked
@@ -76,6 +86,8 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   barOrientation = BarOrientation;
   scaleType = ScaleType.Linear;
   legendSpacing = 0;
+  yAxisLabelResolved: string;
+  yAxisTickFormattingInner: (any) => string;
 
   update(): void {
     super.update();
@@ -110,6 +122,23 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     this.setColors();
     this.legendOptions = this.getLegendOptions();
     this.transform = `translate(${this.dims.xOffset} , ${this.margin[0] + this.dataLabelMaxHeight.negative})`;
+    if (typeof this.yAxisLabel === 'string') {
+      this.yAxisLabelResolved = this.yAxisLabel
+    } else {
+      const selectedUnit: SelectableUnitType = this.selectableUnits.find(selectedUnit => selectedUnit.name === this.selectedUnitName)
+      this.yAxisLabelResolved = this.yAxisLabel(selectedUnit);
+    }
+    if (this.useLogYScale) {
+      const logStart: number = Math.floor(Math.log10(Math.min(...this.valueDomain)));
+      const logEnd: number = Math.ceil(Math.log10(Math.max(...this.valueDomain)));
+      let ticksArray: number[] = [];
+      for (let n: number = logStart; n <= logEnd; n++) {
+        ticksArray.push(Math.pow(10, n));
+      }
+      this.yAxisTicks = ticksArray;
+    } else {
+      this.yAxisTicks = undefined;
+    }
   }
 
   onDataLabelMaxHeightChanged(event: any, groupIndex: number): void {

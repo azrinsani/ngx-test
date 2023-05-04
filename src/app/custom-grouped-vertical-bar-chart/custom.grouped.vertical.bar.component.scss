@@ -118,3 +118,47 @@ ngx-charts-legend {
   cursor: default !important; // This disables mouse hover cursor on the legend labels
   color: #000; // This disables mouse hover effect on the legend labels
 }
+
+.scale-selector {
+  display: flex;
+  flex-direction: row;
+  margin: 5px 0 10px 0;
+}
+
+.scale-selector > button {
+  width: 120px;
+  padding: 2px;
+  margin: -1px;
+}
+
+.scale-selector > button:nth-child(1) {
+  border-radius: 30px 0 0 30px;
+}
+
+.scale-selector > button:nth-child(2) {
+  border-radius: 0 30px 30px 0;
+}
+
+.metric-selector {
+  display: flex;
+  flex-direction: row;
+  margin: 0 12px;
+  align-items: center;
+}
+
+.metric-selector-text {
+  margin-right: 3px;
+}
+
+.selector-button {
+  display: flex;
+  flex-direction: row;
+}
+
+.selector-button-text {
+  flex-grow: 1;
+}
+
+.metric-selector-div {
+  min-width: 60px;
+}

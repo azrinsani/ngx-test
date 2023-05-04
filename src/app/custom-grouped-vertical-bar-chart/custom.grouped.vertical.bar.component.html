@@ -1,3 +1,25 @@
+<div class="scale-selector" role="group" aria-label="...">
+  <button type="button" [class.btn-selected]="!useLogYScale" (click)="this.useLogYScale = false; update()" class="btn btn-sm btn-selectable btn-sm btn-default">Linear Scale</button>
+  <button type="button" [class.btn-selected]="useLogYScale" (click)="this.useLogYScale = true; update()" class="btn btn-sm btn-selectable btn-default">Log Scale</button>
+  <div class="metric-selector">
+    <div class="metric-selector-text">{{unitText}}</div>
+    <div class="text-center padding-top metric-selector-div">
+      <div class="dropdown" dropdown>
+        <button class="btn btn-ga btn-dropdown selector-button" dropdownToggle>
+          <div class="selector-button-text">{{selectedUnitName}}</div>
+          <div><span class="caret"></span></div>
+        </button>
+        <ul id="dropdown" class="dropdown-menu" *dropdownMenu>
+          <li *ngFor="let selectableUnit of selectableUnits" [class.active]="selectedUnitName === selectableUnit.name">
+            <a (click)="selectedUnitName = selectableUnit.name; update()">{{selectableUnit.name}}</a>
+          </li>
+          <span id="end-of-dropdown"></span>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
 <ngx-charts-chart [ngClass]="{ 'chart-hide-legend-text': !legendTitle }"
   [view]="[width + legendSpacing, height]"
   [showLegend]="showLegend"
@@ -29,7 +51,7 @@
       [dims]="dims"
       [showGridLines]="showGridLines"
       [showLabel]="showYAxisLabel"
-      [labelText]="yAxisLabel"
+      [labelText]="yAxisLabelResolved"
       [trimTicks]="false"
       [maxTickLength]="16"
       [tickFormatting]="yAxisTickFormatting"

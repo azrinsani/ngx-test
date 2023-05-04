@@ -22,3 +22,10 @@ export enum BarOrientation {
   Vertical = 'vertical',
   Horizontal = 'horizontal'
 }
+
+export interface SelectableUnitType {
+  name: string;
+  converterFunction?: (number) => number;
+}
+
+export type YAxisLabelType = string | ((selectableUnitType:SelectableUnitType) => string)

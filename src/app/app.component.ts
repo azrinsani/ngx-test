@@ -6,7 +6,11 @@ import {
   boxPlotDataJsonStr,
   tonnageChartDataLog, gradeChartDataLog
 } from "./app.data";
-import { LegendPosition } from './custom-grouped-vertical-bar-chart/custom.grouped.vertical.bar.type';
+import {
+  LegendPosition,
+  SelectableUnitType,
+  YAxisLabelType
+} from './custom-grouped-vertical-bar-chart/custom.grouped.vertical.bar.type';
 import { DataItem, MultiSeries, Series } from "@swimlane/ngx-charts/lib/models/chart-data.model";
 import { DepositSummaryGeochemistryFeaturePropertiesType, DepositSummaryWfsType } from "./geochemistry/deposit.summary.report.type";
 import { property } from "lodash-es";
@@ -37,6 +41,16 @@ export class AppComponent {
   colorSets: any;
   colorScheme: any;
   boxData: BoxPlotSeriesType[];
+  yAxisTickFormattingFunc: (any) => string;
+  selectableUnits: SelectableUnitType[] = [
+    { name: 't' },
+    { name: 'Kt' },
+    { name: 'Mt' },
+    { name: 'Gt' },
+    { name: '%' },
+  ]
+  selectedUnitName: string;
+  yAxisLabel: YAxisLabelType;
 
   constructor() {
     setTheme('bs3');
@@ -44,9 +58,10 @@ export class AppComponent {
     this.yAxisLabel = "Tonnage (" + this.selectedUnitName + ")";
     const getFeatureResult: DepositSummaryWfsType = JSON.parse(mockDepositGeochemistryJson);
     this.boxData = JSON.parse(boxPlotDataJsonStr);
-    console.log(mockBoxData)
-    console.log(this.boxData);
-    // this.polarChartData = this.transformToPolarChartData(getFeatureResult);
+    this.yAxisLabel = (selectableUnit: SelectableUnitType) => "Tonnage (" + selectableUnit.name + ")";
+    this.yAxisTickFormattingFunc = (a) => {
+      return a;
+    }
   }
 
   // Transform WFS result into Polar Series

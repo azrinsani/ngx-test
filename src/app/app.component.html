@@ -93,14 +93,18 @@
     [showXAxisLabel]= "true"
     [xAxisLabel]= "'Resources and Reserves Categories'"
     [trimXAxisTicks]="false"
+    [yAxisTickFormatting]="yAxisTickFormattingFunc"
     [autoRotateXAxisTicks]="true"
     [showYAxisLabel]= "true"
-    [yAxisLabel]="'Tonnage (MT)'"
+    [useLogYScale]="true"
+    [yAxisLabel]="yAxisLabel"
     [groupPadding]="50"
     [barPadding]="0"
     [roundDomains]="true"
     [showDataLabel]="false"
     [showLegend]="true"
+    [selectableUnits]="selectableUnits"
+    [selectedUnitName]="'Mt'"
     [legendTitle]="'Legend Title'">
     <ng-template #tooltipTemplate let-model="model">
       <h3>{{ model.name }}: {{ model.value }}%</h3>
