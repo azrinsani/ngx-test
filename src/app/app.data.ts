@@ -86,7 +86,6 @@ export const gradeChartDataLog: MultiSeries = [
   {
     name: "Indicated resource",
     series: [
-
       {
         name: "Lead Grade",
         value: 70

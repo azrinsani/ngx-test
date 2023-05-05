@@ -43,11 +43,10 @@ export class AppComponent {
   boxData: BoxPlotSeriesType[];
   yAxisTickFormattingFunc: (any) => string;
   selectableUnits: SelectableUnitType[] = [
-    { name: 't' },
-    { name: 'Kt' },
-    { name: 'Mt' },
-    { name: 'Gt' },
-    { name: '%' },
+    { name: 't', converterFunction: e => e },
+    { name: 'Kt', converterFunction: e => e / 1000 },
+    { name: 'Mt', converterFunction: e => e / 1000000 },
+    { name: 'Gt', converterFunction: e => e / 1000000000 },
   ]
   selectedUnitName: string;
   yAxisLabel: YAxisLabelType;
@@ -60,7 +59,7 @@ export class AppComponent {
     this.boxData = JSON.parse(boxPlotDataJsonStr);
     this.yAxisLabel = (selectableUnit: SelectableUnitType) => "Tonnage (" + selectableUnit.name + ")";
     this.yAxisTickFormattingFunc = (a) => {
-      return a;
+      return a
     }
   }
 

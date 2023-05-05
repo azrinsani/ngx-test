@@ -88,6 +88,7 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
   legendSpacing = 0;
   yAxisLabelResolved: string;
   yAxisTickFormattingInner: (any) => string;
+  dataInner: MultiSeries = [];
 
   update(): void {
     super.update();
@@ -122,10 +123,10 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
     this.setColors();
     this.legendOptions = this.getLegendOptions();
     this.transform = `translate(${this.dims.xOffset} , ${this.margin[0] + this.dataLabelMaxHeight.negative})`;
+    const selectedUnit: SelectableUnitType = this.selectableUnits.find(selectedUnit => selectedUnit.name === this.selectedUnitName);
     if (typeof this.yAxisLabel === 'string') {
       this.yAxisLabelResolved = this.yAxisLabel
     } else {
-      const selectedUnit: SelectableUnitType = this.selectableUnits.find(selectedUnit => selectedUnit.name === this.selectedUnitName)
       this.yAxisLabelResolved = this.yAxisLabel(selectedUnit);
     }
     if (this.useLogYScale) {
@@ -138,6 +139,22 @@ export class CustomGroupedVerticalBarComponent extends BaseChartComponent {
       this.yAxisTicks = ticksArray;
     } else {
       this.yAxisTicks = undefined;
+    }
+
+    this.data.forEach(e => {
+      e.series.forEach(e2 => {
+        e2.extra = selectedUnit.converterFunction(e2.value) + " " + selectedUnit.name;
+      });
+    })
+    this.dataInner = this.data;
+
+    this.yAxisTickFormattingInner = (tickValue: number): string => {
+      if (this.selectedUnitName) {
+        const selectedUnit: SelectableUnitType = this.selectableUnits.find(selectedUnit => selectedUnit.name === this.selectedUnitName);
+        return selectedUnit.converterFunction ? this.yAxisTickFormatting(selectedUnit.converterFunction(tickValue)) : this.yAxisTickFormatting(tickValue);
+      } else {
+        return this.yAxisTickFormatting(tickValue);
+      }
     }
   }
 

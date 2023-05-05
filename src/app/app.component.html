@@ -95,7 +95,7 @@
     [trimXAxisTicks]="false"
     [yAxisTickFormatting]="yAxisTickFormattingFunc"
     [autoRotateXAxisTicks]="true"
-    [showYAxisLabel]= "true"
+    [showYAxisLabel]= "false"
     [useLogYScale]="true"
     [yAxisLabel]="yAxisLabel"
     [groupPadding]="50"
@@ -107,7 +107,7 @@
     [selectedUnitName]="'Mt'"
     [legendTitle]="'Legend Title'">
     <ng-template #tooltipTemplate let-model="model">
-      <h3>{{ model.name }}: {{ model.value }}%</h3>
+      <h3>{{ model.extra }}</h3>
     </ng-template>
   </ga-ngx-charts-grouped-vertical-bar>
 </div>
