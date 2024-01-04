@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, Output, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ScaleLinear, scaleLinear } from 'd3-scale';
 import { BaseChartComponent, calculateViewDimensions, ColorHelper, ViewDimensions } from '@swimlane/ngx-charts';
 import { BoxPlotSeriesType, IBoxModelType, LegendOptionType, LegendPosition, ScaleType } from '../../shared/types/custom.chart.type';
 import { scaleBand, ScaleBand, scaleLog, ScaleLogarithmic } from 'd3';

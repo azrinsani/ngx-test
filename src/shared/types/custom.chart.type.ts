@@ -97,3 +97,48 @@ export enum BarOrientation {
   Vertical = 'vertical',
   Horizontal = 'horizontal'
 }
+
+export interface DepositClimateChartConfigType {
+  name: string;
+  s3Bucket: string;
+  s3Key: string;
+  climateProperty: DepositClimatePropertyEnumType;
+  provider: DepositProviderType;
+}
+
+export interface DepositClimateDataType {
+  id: string;
+  property: string;
+  isMonthly: boolean;
+  provider: DepositProviderType;
+  values: Record<string, number>;
+}
+
+export type DepositProviderType = 'BOM' | 'ANU';
+
+export interface DepositClimateChartDataType {
+  name: string;
+  series: {
+    name: Date;
+    value: number;
+  }[];
+}
+
+export enum DepositClimatePropertyEnumType {
+  PERCIPITATION_CALIBRATED = 0,
+  PRECIPITATION_TOTAL = 1,
+  PRECIPITATION_WEIGHT = 2,
+  MAXIMUM_TEMPERATURE = 3,
+  MINIMUM_TEMPERATURE = 4,
+  AVERAGE_TEMPERATURE = 5,
+  VAPOUR_PRESSURE_H09 = 6,
+  VAPOUR_PRESSURE_H15 = 7,
+  VAPOUR_PRESSURE_VP = 8,
+  VAPOUR_PRESSURE_DEFICIT = 9,
+  FROST = 10,
+  RAINFALL_OCCURRENCE = 11,
+  PAN_EVAPORATION = 12,
+  TOTAL_RAINFALL = 13,
+  TOTAL_SOLAR_RADIATION = 14
+}
+

@@ -5,3 +5,13 @@ body {
   height: 100%;
   font-family: sans-serif;
 }
+
+.deposit-climate-chart-container {
+  margin: 0 auto;
+  overflow-x: auto;
+  display: flex;
+}
+
+.box-chart {
+  margin: 0 auto;
+}

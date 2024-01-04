@@ -10,6 +10,7 @@ import { CustomPolarChartModule } from "./custom-polar-chart/custom.polar.chart.
 import { CustomBoxPlotSeriesChartModule } from "./custom-box-plot-series-chart/custom.box.plot.series.chart.module";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
+import {CustomLineChartModule} from "./custom-line-chart/custom.line.chart.module";
 
 @NgModule({
   declarations: [
@@ -21,12 +22,14 @@ import { TooltipModule } from "ngx-bootstrap/tooltip";
     CustomBarVerticalModule,
     CustomGroupedVerticalBarModule,
     CustomBoxPlotSeriesChartModule,
+    CustomLineChartModule,
     CustomPolarChartModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
     CommonModule,
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
+    CustomLineChartModule
   ],
   providers: [],
   bootstrap: [AppComponent]

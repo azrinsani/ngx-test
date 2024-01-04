@@ -1,23 +1,30 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {
-  tonnageChartData,
-  gradeChartData,
-  polarChartDataMock,
   boxPlotDataJsonStr,
-  tonnageChartDataLog, gradeChartDataLog
+  depositClimateDataJsonStr,
+  gradeChartDataLog,
+  polarChartDataMock,
+  tonnageChartData,
+  tonnageTimeSeriesData
 } from "./app.data";
 import {
   LegendPosition,
   SelectableUnitType,
   YAxisLabelType
 } from './custom-grouped-vertical-bar-chart/custom.grouped.vertical.bar.type';
-import { DataItem, MultiSeries, Series } from "@swimlane/ngx-charts/lib/models/chart-data.model";
-import { DepositSummaryGeochemistryFeaturePropertiesType, DepositSummaryWfsType } from "./geochemistry/deposit.summary.report.type";
-import { property } from "lodash-es";
-import { mockDepositGeochemistryJson } from "./geochemistry/deposit.geochemistry.mock";
-import { BoxPlotSeriesType, ScaleType } from 'src/shared/types/custom.chart.type';
+import {DataItem, MultiSeries, Series} from "@swimlane/ngx-charts/lib/models/chart-data.model";
+import {
+  DepositSummaryGeochemistryFeaturePropertiesType,
+  DepositSummaryWfsType
+} from "./geochemistry/deposit.summary.report.type";
+import {
+  BoxPlotSeriesType,
+  DepositClimateChartDataType,
+  DepositClimateDataType,
+  ScaleType
+} from 'src/shared/types/custom.chart.type';
 import {setTheme} from "ngx-bootstrap/utils";
-import {Select} from "ol/interaction";
+import {depositClimateChartConfig} from "./deposit.climate.config";
 
 @Component({
   selector: 'app-root',
@@ -29,6 +36,7 @@ export class AppComponent {
   data1: MultiSeries = tonnageChartData;
   data2: MultiSeries = gradeChartDataLog;
   polarChartData: MultiSeries = polarChartDataMock;
+  timeChartData: MultiSeries = tonnageTimeSeriesData;
   boxPlotData: MultiSeries;
   legendPosition = LegendPosition.Right;
   customColors: any[] = [
@@ -40,6 +48,8 @@ export class AppComponent {
   schemeType = ScaleType.Ordinal;
   colorSets: any;
   colorScheme: any;
+  climateData: DepositClimateDataType;
+  climateChartData: DepositClimateChartDataType;
   boxData: BoxPlotSeriesType[];
   yAxisTickFormattingFunc: (any) => string;
   selectableUnits: SelectableUnitType[] = [
@@ -55,8 +65,18 @@ export class AppComponent {
     setTheme('bs3');
     this.selectedUnitName = this.selectableUnits[0].name;
     this.yAxisLabel = "Tonnage (" + this.selectedUnitName + ")";
-    const getFeatureResult: DepositSummaryWfsType = JSON.parse(mockDepositGeochemistryJson);
     this.boxData = JSON.parse(boxPlotDataJsonStr);
+    this.climateData = JSON.parse(depositClimateDataJsonStr);
+    console.log(this.climateData);
+    this.climateChartData = <DepositClimateChartDataType> {
+      name: depositClimateChartConfig.find(config => config.climateProperty === Number(this.climateData.property) && config.provider === this.climateData.provider).name,
+      series: Object.keys(this.climateData.values).map(key => ({
+        name: new Date(key),
+        value: this.climateData.values[key]
+      }))
+    }
+    console.log(this.boxData);
+    console.log(this.climateChartData);
     this.yAxisLabel = (selectableUnit: SelectableUnitType) => "Tonnage (" + selectableUnit.name + ")";
     this.yAxisTickFormattingFunc = (a) => {
       return a
@@ -125,94 +145,14 @@ export class AppComponent {
   onLegendLabelClick(entry) {
     console.log('Legend clicked', entry);
   }
+
+  // Formats the axis ticks to include carbon name
+  getXAxisTickFormat = (xAxisValue: number): string => {
+    return new Date(xAxisValue).toLocaleDateString();
+  };
+
+  getLocalDateString(xAxisValue: number): string {
+    return new Date(xAxisValue).toLocaleDateString();
+  }
 }
 
-export const mockBoxData: BoxPlotSeriesType[] = [
-  {
-    name: 'Colombia',
-    series: [
-      {
-        name: '2019',
-        value: 12
-      },
-      {
-        name: '2020',
-        value: 23
-      },
-      {
-        name: '2021',
-        value: 34
-      },
-      {
-        name: '2022',
-        value: 27
-      },
-      {
-        name: '2023',
-        value: 18
-      },
-      {
-        name: '2024',
-        value: 45
-      }
-    ]
-  },
-  {
-    name: 'Chile',
-    series: [
-      {
-        name: '2019',
-        value: 20
-      },
-      {
-        name: '2020',
-        value: 28
-      },
-      {
-        name: '2021',
-        value: 42
-      },
-      {
-        name: '2022',
-        value: 39
-      },
-      {
-        name: '2023',
-        value: 31
-      },
-      {
-        name: '2024',
-        value: 61
-      }
-    ]
-  },
-  {
-    name: 'Perú',
-    series: [
-      {
-        name: '2019',
-        value: 47
-      },
-      {
-        name: '2020',
-        value: 62
-      },
-      {
-        name: '2021',
-        value: 55
-      },
-      {
-        name: '2022',
-        value: 42
-      },
-      {
-        name: '2023',
-        value: 49
-      },
-      {
-        name: '2024',
-        value: 71
-      }
-    ]
-  }
-];
