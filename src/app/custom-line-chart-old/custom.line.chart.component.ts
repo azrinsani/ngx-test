@@ -98,7 +98,6 @@ export class CustomLineChartComponent extends BaseChartComponent {
 
   update(): void {
 
-    console.log(this.results);
     super.update();
 
     if (this.xAxisTickDecimals === undefined) {

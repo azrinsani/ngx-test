@@ -69,7 +69,7 @@ import {ArrayUtilsCommon} from "../utils/array/array.utils";
               [colors]="colors"
               [data]="series"
               [activeEntries]="activeEntries"
-              [scaleType]="scaleType"
+              [scaleType]="xScaleType"
               [curve]="curve"
               [rangeFillOpacity]="rangeFillOpacity"
               [hasRange]="hasRange"
@@ -98,7 +98,7 @@ import {ArrayUtilsCommon} from "../utils/array/array.utils";
                 [yScale]="yScale"
                 [colors]="colors"
                 [data]="series"
-                [scaleType]="scaleType"
+                [scaleType]="xScaleType"
                 [visibleValue]="hoveredVertical"
                 [activeEntries]="activeEntries"
                 [tooltipDisabled]="false"
@@ -132,14 +132,14 @@ import {ArrayUtilsCommon} from "../utils/array/array.utils";
       </svg:g>
       <svg:g
         ngx-charts-timeline
-        *ngIf="timeline && scaleType !== 'ordinal'"
+        *ngIf="timeline && xScaleType !== 'ordinal'"
         [attr.transform]="timelineTransform"
         [results]="results"
         [view]="[timelineWidth, height]"
         [height]="timelineHeight"
         [scheme]="scheme"
         [customColors]="customColors"
-        [scaleType]="scaleType"
+        [scaleType]="xScaleType"
         [legend]="legend"
         (onDomainChange)="updateDomain($event)"
       >
@@ -150,7 +150,7 @@ import {ArrayUtilsCommon} from "../utils/array/array.utils";
             [yScale]="timelineYScale"
             [colors]="colors"
             [data]="series"
-            [scaleType]="scaleType"
+            [scaleType]="xScaleType"
             [curve]="curve"
             [hasRange]="hasRange"
             [animations]="animations"
@@ -203,7 +203,7 @@ export class CustomLineChartComponent extends BaseChartComponent {
   @Input() showRefLines: boolean = false;
   @Input() referenceLines: any;
   @Input() showRefLabels: boolean = true;
-  @Input() scaleType: string;
+  @Input() xScaleType: string;
   @Input() xScaleMin: number;
   @Input() xScaleMax: number;
   @Input() yScaleMin: number;
@@ -332,16 +332,16 @@ export class CustomLineChartComponent extends BaseChartComponent {
 
   getXDomain(): any[] {
     let values: any[] = getUniqueXDomainValues(this.results);
-    this.scaleType = this.getXScaleType(values);
-    let domain: any[] = [];
+    this.xScaleType = this.getXScaleType(values);
+    let domain: any[];
 
-    if (this.scaleType === 'linear' || this.scaleType === 'log') {
+    if (this.xScaleType === 'linear' || this.xScaleType === 'log') {
       values = values.map(v => Number(v));
     }
 
     let min: number;
     let max: number;
-    if (this.scaleType === 'time' || this.scaleType === 'linear' || this.scaleType === 'log') {
+    if (this.xScaleType === 'time' || this.xScaleType === 'linear' || this.xScaleType === 'log') {
       const [minValue, maxValue]: [number, number] = ArrayUtilsCommon.getMinMax(values);
       min = this.hasValue(this.xScaleMin)
         ? this.xScaleMin
@@ -352,14 +352,14 @@ export class CustomLineChartComponent extends BaseChartComponent {
         : maxValue;
     }
 
-    if (this.scaleType === 'time') {
+    if (this.xScaleType === 'time') {
       domain = [new Date(min), new Date(max)];
       this.xSet = [...values].sort((a, b) => {
         const aDate: number = a.getTime();
         const bDate: number = b.getTime();
         return aDate - bDate;
       });
-    } else if (this.scaleType === 'linear' || this.scaleType === 'log') {
+    } else if (this.xScaleType === 'linear' || this.xScaleType === 'log') {
       domain = [min, max];
       this.xSet = this.results[0].series.map((obj) => obj.name); // Custom function, dataset should already be sorted
     } else {
@@ -421,7 +421,7 @@ export class CustomLineChartComponent extends BaseChartComponent {
   getXScale(domain: any[], width: number): any {
     let scale: any;
 
-    switch (this.scaleType) {
+    switch (this.xScaleType) {
       case 'linear':
         scale = scaleLinear()
           .range([0, width])
@@ -465,8 +465,8 @@ export class CustomLineChartComponent extends BaseChartComponent {
   }
 
   getXScaleType(values: any[]): string {
-    if (this.scaleType) {
-      return this.scaleType;
+    if (this.xScaleType) {
+      return this.xScaleType;
     }
 
     // If scale type not specified, set based on the data.
