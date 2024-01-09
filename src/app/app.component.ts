@@ -59,7 +59,8 @@ export class AppComponent {
     { name: 'Gt', converterFunction: e => e / 1000000000 },
   ]
   selectedUnitName: string;
-  yAxisLabel: YAxisLabelType;
+  yAxisLabel: YAxisLabelType
+  logScale: boolean = false;
 
   constructor() {
     setTheme('bs3');
@@ -67,7 +68,6 @@ export class AppComponent {
     this.yAxisLabel = "Tonnage (" + this.selectedUnitName + ")";
     this.boxData = JSON.parse(boxPlotDataJsonStr);
     this.climateData = JSON.parse(depositClimateDataJsonStr);
-    console.log(this.climateData);
     this.climateChartData = <DepositClimateChartDataType> {
       name: depositClimateChartConfig.find(config => config.climateProperty === Number(this.climateData.property) && config.provider === this.climateData.provider).name,
       series: Object.keys(this.climateData.values).map(key => ({
@@ -75,8 +75,6 @@ export class AppComponent {
         value: this.climateData.values[key]
       }))
     }
-    console.log(this.boxData);
-    console.log(this.climateChartData);
     this.yAxisLabel = (selectableUnit: SelectableUnitType) => "Tonnage (" + selectableUnit.name + ")";
     this.yAxisTickFormattingFunc = (a) => {
       return a
@@ -153,6 +151,14 @@ export class AppComponent {
 
   getLocalDateString(xAxisValue: number): string {
     return new Date(xAxisValue).toLocaleDateString();
+  }
+
+  getValue(yAxisValue: number): number {
+    if (this.logScale) {
+      return Math.pow(10, yAxisValue);
+    } else {
+      return yAxisValue;
+    }
   }
 }
 

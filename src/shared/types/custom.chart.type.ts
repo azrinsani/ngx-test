@@ -1,4 +1,5 @@
 import { ColorHelper } from '@swimlane/ngx-charts';
+import { CustomLineChartDataType } from "../../app/custom-line-chart/custom.line.chart.component";
 
 export enum LegendPosition {
   Right = 'right',
@@ -116,12 +117,7 @@ export interface DepositClimateDataType {
 
 export type DepositProviderType = 'BOM' | 'ANU';
 
-export interface DepositClimateChartDataType {
-  name: string;
-  series: {
-    name: Date;
-    value: number;
-  }[];
+export interface DepositClimateChartDataType extends CustomLineChartDataType {
 }
 
 export enum DepositClimatePropertyEnumType {

@@ -11,6 +11,7 @@ import { CustomBoxPlotSeriesChartModule } from "./custom-box-plot-series-chart/c
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import {CustomLineChartModule} from "./custom-line-chart/custom.line.chart.module";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import {CustomLineChartModule} from "./custom-line-chart/custom.line.chart.modul
     NoopAnimationsModule,
     CommonModule,
     TooltipModule.forRoot(),
-    CustomLineChartModule
+    CustomLineChartModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

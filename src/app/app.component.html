@@ -114,6 +114,9 @@
 
 <h2>Line Chart</h2>
 <div class="deposit-climate-chart-container">
+  <label class="chart-options-item-text checkmark-container checkmark-inline">Log Scale
+    <input type="checkbox" (click)="logScale = !logScale" [(ngModel)]="logScale"/><span class="checkmark"></span>
+  </label>
   <ga-ngx-charts-line-chart class="box-chart"
     [view]="[1200, 500]"
     [showXAxisLabel]="false"
@@ -122,22 +125,23 @@
     [yAxis]="true"
     [xAxisLabel]="'ARI (years)'"
     [yAxisLabel]="'Wind speed (km/h)'"
-    [results]="[climateChartData]"
+    [data]="[climateChartData]"
     [xAxisTickFormatting]="getXAxisTickFormat"
     [showGridLines]="true"
     [legend]="false"
     [timeline]="false"
     [tooltipDisabled]="false"
     [autoScale]="false"
-    [scaleType]="'linear'">
+    [xScaleType]="'linear'"
+    [yScaleType]="logScale ? 'log' : 'linear'">
     <ng-template #tooltipTemplate let-dataModel="model">
       <div class="chart-tooltip">
-        {{ getLocalDateString(dataModel.name) }} - {{ dataModel.value }} km/h
+        {{ getLocalDateString(dataModel.name) }} - {{ getValue(dataModel.value) }} km/h
       </div>
     </ng-template>
     <ng-template #seriesTooltipTemplate let-seriesList="model">
       <div class="chart-tooltip">
-        {{ getLocalDateString(seriesList[0].name) }} - {{ seriesList[0].value }} km/h
+        {{ getLocalDateString(seriesList[0].name) }} - {{ getValue(seriesList[0].value) }} km/h
       </div>
     </ng-template>
   </ga-ngx-charts-line-chart>

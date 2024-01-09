@@ -4,6 +4,7 @@ import { scaleLinear, scaleLog, scalePoint, scaleTime } from 'd3-scale';
 import { curveLinear } from 'd3-shape';
 import { BaseChartComponent, calculateViewDimensions, ColorHelper, getUniqueXDomainValues, id, ViewDimensions } from '@swimlane/ngx-charts';
 import {ArrayUtilsCommon} from "../utils/array/array.utils";
+import { cloneDeep } from "lodash-es";
 
 @Component({
   selector: 'ga-ngx-charts-line-chart',
@@ -53,7 +54,7 @@ import {ArrayUtilsCommon} from "../utils/array/array.utils";
           [labelText]="yAxisLabel"
           [trimTicks]="false"
           [maxTickLength]="16"
-          [tickFormatting]="yAxisTickFormatting"
+          [tickFormatting]="yAxisTickFormattingUpdated"
           [ticks]="yAxisTicks"
           [referenceLines]="referenceLines"
           [showRefLines]="showRefLines"
@@ -176,6 +177,7 @@ import {ArrayUtilsCommon} from "../utils/array/array.utils";
   ]
 })
 export class CustomLineChartComponent extends BaseChartComponent {
+  @Input() data: CustomLineChartDataType[];
   @Input() legend: boolean;
   @Input() legendTitle: string = 'Legend';
   @Input() legendPosition: string = 'right';
@@ -193,8 +195,8 @@ export class CustomLineChartComponent extends BaseChartComponent {
   @Input() activeEntries: any[] = [];
   @Input() schemeType: string;
   @Input() rangeFillOpacity: number;
-  @Input() xAxisTickFormatting: any;
-  @Input() yAxisTickFormatting: any;
+  @Input() xAxisTickFormatting: (xValue: any) => string | number;
+  @Input() yAxisTickFormatting: (yValue: any) => string | number;
   @Input() xAxisTicks: any[];
   @Input() yAxisTicks: any[];
   @Input() rotateXAxisTicks: boolean = true;
@@ -206,6 +208,7 @@ export class CustomLineChartComponent extends BaseChartComponent {
   @Input() xScaleType: string;
   @Input() xScaleMin: number;
   @Input() xScaleMax: number;
+  @Input() yScaleType: string;
   @Input() yScaleMin: number;
   @Input() yScaleMax: number;
   @Input() yScaleMinInitial: number;
@@ -247,9 +250,12 @@ export class CustomLineChartComponent extends BaseChartComponent {
   timelineTransform: any;
   timelinePadding: number = 10;
   xAxisTickDecimals: number;
+  yAxisTickFormattingUpdated: (yValue: any) => number | string;
 
   update(): void {
     super.update();
+    this.updateDataSet();
+
     if (this.xAxisTickDecimals === undefined) {
       if (this.xAxisTicks !== undefined) {
         this.xAxisTickDecimals = this.countDecimals(this.xAxisTicks[0]);
@@ -270,6 +276,14 @@ export class CustomLineChartComponent extends BaseChartComponent {
         }
         return val;
       };
+    }
+
+    if (this.yScaleType === 'log') {
+      this.yAxisTickFormattingUpdated = (val): number => {
+        return Math.pow(10, val);
+      }
+    } else {
+      this.yAxisTickFormattingUpdated = this.yAxisTickFormatting;
     }
 
     this.dims = calculateViewDimensions({
@@ -297,6 +311,7 @@ export class CustomLineChartComponent extends BaseChartComponent {
     }
 
     this.yDomain = this.getYDomain();
+    this.getYTicks();
     this.seriesDomain = this.getSeriesDomain();
 
     this.xScale = this.getXScale(this.xDomain, this.dims.width);
@@ -318,6 +333,27 @@ export class CustomLineChartComponent extends BaseChartComponent {
       return value.toString().split('.')[1].length;
     }
     return 0;
+  }
+
+  // Transforms the data to log scale if the yScaleType is log
+  updateDataSet(): void {
+    if (this.yScaleType === 'log') {
+      const logData: CustomLineChartDataType[] = [];
+      this.data.forEach(dataSet => {
+        const logDataSet: CustomLineChartDataType = cloneDeep(dataSet);
+        logDataSet.series.forEach((series) => {
+          if (series.value > 0) {
+            series.value = Math.log10(Number(series.value));
+          }
+        });
+        logData.push(logDataSet);
+      });
+      this.results = logData;
+    } else {
+      if (this.data !== undefined) {
+        this.results = this.data
+      }
+    }
   }
 
   updateTimeline(): void {
@@ -388,6 +424,7 @@ export class CustomLineChartComponent extends BaseChartComponent {
   }
 
   getYDomain(): any[] {
+    const isLogScale: boolean = this.yScaleType === 'log';
     const domain: any[] = [];
     for (const results of this.results) {
       for (const d of results.series) {
@@ -398,21 +435,34 @@ export class CustomLineChartComponent extends BaseChartComponent {
     }
 
     const values: any[] = [...domain];
-    if (!this.autoScale) {
+    if (!this.autoScale && !isLogScale) {
       values.push(0);
     }
 
     const [minValue, maxValue]: [number, number] = ArrayUtilsCommon.getMinMax(values);
     const min: number = this.hasValue(this.yScaleMin)
       ? this.yScaleMin
-      : minValue;
+      : isLogScale ? Math.floor(minValue) : minValue;
 
     const max: number = this.hasValue(this.yScaleMax)
       ? this.yScaleMax
-      : maxValue;
+      : isLogScale ? Math.ceil(maxValue) : maxValue;
 
     return [min, max];
   }
+
+  getYTicks(): void {
+    if (this.yScaleType === 'log') {
+      const ticks: number[] = [];
+      for (let i: number = this.yDomain[0]; i < this.yDomain[1] + 1; i++) {
+        ticks.push(i);
+      }
+      this.yAxisTicks = ticks;
+    } else {
+      this.yAxisTicks = undefined;
+    }
+  }
+
 
   getSeriesDomain(): any[] {
     return this.results.map(d => d.name);
@@ -606,4 +656,14 @@ export class CustomLineChartComponent extends BaseChartComponent {
     }
     this.activeEntries = [];
   }
+}
+
+export interface CustomLineChartDataType {
+  name: string;
+  series: CustomLineChartDataSeriesType[];
+}
+
+export interface CustomLineChartDataSeriesType {
+  name: any;
+  value: any;
 }
